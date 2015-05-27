@@ -99,8 +99,26 @@ func (c *CfServiceJumperPlugin) CreateForward(cliConnection plugin.CliConnection
 	return nil
 }
 
-func (c *CfServiceJumperPlugin) DeleteForward() error {
-	return errors.New("not implemented")
+func (c *CfServiceJumperPlugin) DeleteForward(cliConnection plugin.CliConnection, serviceGuid string, connectionId string, cfServiceJumperApiEndpoint string) error {
+	path := fmt.Sprintf("/services/%s/forwards/%s", serviceGuid, connectionId)
+	url := fmt.Sprintf("%s%s", cfServiceJumperApiEndpoint, path)
+
+	accessToken, err := cliConnection.AccessToken()
+	if err != nil {
+		return err
+	}
+
+	request := gorequest.New()
+	resp, body, errs := request.Post(url).Set("Authorization", accessToken).End()
+	if errs != nil {
+		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. %s", errs[0].Error()))
+	}
+	if resp.StatusCode != http.StatusOK {
+		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. status != 200 ; body = %s", body))
+	}
+
+	fmt.Println(body)
+	return nil
 }
 
 /*
@@ -131,7 +149,8 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	if args[0] == "create-forward" {
 		err = c.CreateForward(cliConnection, serviceGuid, cfServiceJumperApiEndpoint)
 	} else if args[0] == "delete-forward" {
-		err = c.DeleteForward()
+		connectionId := args[2]
+		err = c.DeleteForward(cliConnection, serviceGuid, connectionId, cfServiceJumperApiEndpoint)
 	}
 	fatalIf(err)
 }
