@@ -21,7 +21,7 @@ func fatalIf(err error) {
 
 /*
 *	This is the struct implementing the interface defined by the core CLI. It can
-*	be found at  "github.com/cloudfoundry/cli/plugin/plugin.go"
+*	be found at  "https://github.com/cloudfoundry/cli/blob/master/plugin/plugin.go"
 *
  */
 type CfServiceJumperPlugin struct{}
@@ -55,7 +55,8 @@ func (c *CfServiceJumperPlugin) FetchCfServiceJumperApiEndpoint(cliConnection pl
 
 	request := gorequest.New()
 	resp, body, errs := request.Get(url).End()
-	if errs != nil {
+
+	if len(errs) > 0 {
 		return "", errors.New(fmt.Sprintf("Failed to fetch cf service jumper api endpoint. %s", errs[0].Error()))
 	}
 	if resp.StatusCode != http.StatusOK {
@@ -63,14 +64,26 @@ func (c *CfServiceJumperPlugin) FetchCfServiceJumperApiEndpoint(cliConnection pl
 	}
 
 	type CfInfo struct {
-		Custom map[string]string `json:"custom"`
+		//Custom map[string]string `json:"custom"`
+		Name                  string `json:"name"`
+		Build                 string `json:"build"`
+		Support               string `json:"support"`
+		Version               int    `json:"version"`
+		ApiVersion            string `json:"api_version"`
+		AuthorizationEndpoint string `json:"authorization_endpoint"`
+		TokenEndpoint         string `json:"token_endpoint"`
+		LoggingEndpoint       string `json:"logging_endpoint"`
+		ServiceJumperEndpoint string `json:"service_jumper_endpoint"`
 	}
 	var cfInfo CfInfo
-	err = json.Unmarshal([]byte(body), &cfInfo)
+	data := []byte(body)
+	err = json.Unmarshal(data, &cfInfo)
+
 	if err != nil {
 		return "", errors.New(fmt.Sprintf("Failed to fetch cf service jumper api endpoint. %s", err.Error()))
 	}
-	serviceJumperEndpoint := cfInfo.Custom["service_jumper_endpoint"]
+
+	serviceJumperEndpoint := cfInfo.ServiceJumperEndpoint
 	if len(serviceJumperEndpoint) < 1 {
 		return "", errors.New("Failed to fetch cf service jumper api endpoint")
 	}
