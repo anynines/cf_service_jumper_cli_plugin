@@ -34,6 +34,14 @@ func (c *CfServiceJumperPlugin) ExtractServiceInstanceName(args []string) (strin
 	return args[1], nil
 }
 
+func (c *CfServiceJumperPlugin) ExtractConnectionId(args []string) (string, error) {
+	if len(args) < 3 {
+		return "", errors.New("missing CONNECTION_ID")
+	}
+
+	return args[2], nil
+}
+
 func (c *CfServiceJumperPlugin) FetchServiceGuid(cliConnection plugin.CliConnection, serviceInstanceName string) (string, error) {
 	cmdOutput, err := cliConnection.CliCommandWithoutTerminalOutput("service", serviceInstanceName, "--guid")
 	if err != nil {
@@ -162,7 +170,8 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	if args[0] == "create-forward" {
 		err = c.CreateForward(cliConnection, serviceGuid, cfServiceJumperApiEndpoint)
 	} else if args[0] == "delete-forward" {
-		connectionId := args[2]
+		connectionId, err := c.ExtractConnectionId(args)
+		fatalIf(err)
 		err = c.DeleteForward(cliConnection, serviceGuid, connectionId, cfServiceJumperApiEndpoint)
 	}
 	fatalIf(err)
@@ -202,7 +211,7 @@ func (c *CfServiceJumperPlugin) GetMetadata() plugin.PluginMetadata {
 				Name:     "delete-forward",
 				HelpText: "Deletes forward to service instance.",
 				UsageDetails: plugin.Usage{
-					Usage: "\n   cf delete-forward SERVICE_INSTANCE",
+					Usage: "\n   cf delete-forward SERVICE_INSTANCE CONNECTION_ID",
 				},
 			},
 		},
