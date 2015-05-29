@@ -120,7 +120,7 @@ func (c *CfServiceJumperPlugin) DeleteForward(cliConnection plugin.CliConnection
 	}
 
 	request := gorequest.New()
-	resp, body, errs := request.Post(url).Set("Authorization", accessToken).End()
+	resp, body, errs := request.Delete(url).Set("Authorization", accessToken).End()
 	if errs != nil {
 		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. %s", errs[0].Error()))
 	}
