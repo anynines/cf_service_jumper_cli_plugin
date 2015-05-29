@@ -72,26 +72,16 @@ func (c *CfServiceJumperPlugin) FetchCfServiceJumperApiEndpoint(cliConnection pl
 	}
 
 	type CfInfo struct {
-		//Custom map[string]string `json:"custom"`
-		Name                  string `json:"name"`
-		Build                 string `json:"build"`
-		Support               string `json:"support"`
-		Version               int    `json:"version"`
-		ApiVersion            string `json:"api_version"`
-		AuthorizationEndpoint string `json:"authorization_endpoint"`
-		TokenEndpoint         string `json:"token_endpoint"`
-		LoggingEndpoint       string `json:"logging_endpoint"`
-		ServiceJumperEndpoint string `json:"service_jumper_endpoint"`
+		Custom map[string]string `json:"custom"`
 	}
 	var cfInfo CfInfo
-	data := []byte(body)
-	err = json.Unmarshal(data, &cfInfo)
+	err = json.Unmarshal([]byte(body), &cfInfo)
 
 	if err != nil {
 		return "", errors.New(fmt.Sprintf("Failed to fetch cf service jumper api endpoint. %s", err.Error()))
 	}
 
-	serviceJumperEndpoint := cfInfo.ServiceJumperEndpoint
+	serviceJumperEndpoint := cfInfo.Custom["service_jumper_endpoint"]
 	if len(serviceJumperEndpoint) < 1 {
 		return "", errors.New("Failed to fetch cf service jumper api endpoint")
 	}
