@@ -2,6 +2,7 @@
 
 
 ```shell
-cf create-forward myredis-instance
-cf delete-forward myredis-instance
+cf create-forward :service_name
+cf delete-forward :service_name :forward_id
+cf list-forwards :service_name
 ```

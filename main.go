@@ -132,6 +132,28 @@ func (c *CfServiceJumperPlugin) DeleteForward(cliConnection plugin.CliConnection
 	return nil
 }
 
+func (c *CfServiceJumperPlugin) ListForwards(cliConnection plugin.CliConnection, serviceGuid string, cfServiceJumperApiEndpoint string) error {
+	path := fmt.Sprintf("/services/%s/forwards/", serviceGuid)
+	url := fmt.Sprintf("%s%s", cfServiceJumperApiEndpoint, path)
+
+	accessToken, err := cliConnection.AccessToken()
+	if err != nil {
+		return err
+	}
+
+	request := gorequest.New()
+	resp, body, errs := request.Get(url).Set("Authorization", accessToken).End()
+	if errs != nil {
+		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. %s", errs[0].Error()))
+	}
+	if resp.StatusCode != http.StatusOK {
+		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. status != 200 ; body = %s", body))
+	}
+
+	fmt.Println(body)
+	return nil
+}
+
 /**
  *	This function must be implemented by any plugin because it is part of the
  *	plugin interface defined by the core CLI.
@@ -163,12 +185,14 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 		connectionId, err := c.ExtractConnectionId(args)
 		fatalIf(err)
 		err = c.DeleteForward(cliConnection, serviceGuid, connectionId, cfServiceJumperApiEndpoint)
+	} else if args[0] == "list-forwards" {
+		err = c.ListForwards(cliConnection, serviceGuid, cfServiceJumperApiEndpoint)
 	}
 	fatalIf(err)
 }
 
 /**
- *	This function must be implemented as part of the	plugin interface
+ *	This function must be implemented as part of the plugin interface
  *	defined by the core CLI.
  *
  *	GetMetadata() returns a PluginMetadata struct. The first field, Name,
@@ -202,6 +226,13 @@ func (c *CfServiceJumperPlugin) GetMetadata() plugin.PluginMetadata {
 				HelpText: "Deletes forward to service instance.",
 				UsageDetails: plugin.Usage{
 					Usage: "\n   cf delete-forward SERVICE_INSTANCE CONNECTION_ID",
+				},
+			},
+			plugin.Command{
+				Name:     "list-forwards",
+				HelpText: "List open forwards to service instance.",
+				UsageDetails: plugin.Usage{
+					Usage: "\n   cf delete-forward SERVICE_INSTANCE",
 				},
 			},
 		},
