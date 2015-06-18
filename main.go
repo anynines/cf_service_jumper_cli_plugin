@@ -232,7 +232,7 @@ func (c *CfServiceJumperPlugin) GetMetadata() plugin.PluginMetadata {
 				Name:     "list-forwards",
 				HelpText: "List open forwards to service instance.",
 				UsageDetails: plugin.Usage{
-					Usage: "\n   cf delete-forward SERVICE_INSTANCE",
+					Usage: "\n   cf list-forwards",
 				},
 			},
 		},
