@@ -1,8 +1,9 @@
 # Cf Service Jumper CLI Plugin
 
 
+## Usage
 ```shell
-cf create-forward :service_name
-cf delete-forward :service_name :forward_id
-cf list-forwards :service_name
+cf create-forward SERVICE_NAMe
+cf delete-forward SERVICE_NAME FORWARD_ID
+cf list-forwards SERVICE_NAMe
 ```
