@@ -14,7 +14,7 @@ cf install-plugin CfServiceJumperPlugin
 
 ## Usage
 ```shell
-cf create-forward SERVICE_NAMe
+cf create-forward SERVICE_NAME
 cf delete-forward SERVICE_NAME FORWARD_ID
-cf list-forwards SERVICE_NAMe
+cf list-forwards SERVICE_NAME
 ```
