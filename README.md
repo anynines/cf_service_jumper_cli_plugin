@@ -5,6 +5,15 @@ to create, delete and list forwards to services.
 
 ## Development
 
+### Prerequisites
+
+```shell
+go get github.com/cloudfoundry/cli/plugin
+go get github.com/parnurzeal/gorequest
+```
+
+### Build, Install & Uninstall
+
 ```shell
 cf uninstall-plugin CfServiceJumperPlugin  
 go build -o CfServiceJumperPlugin
