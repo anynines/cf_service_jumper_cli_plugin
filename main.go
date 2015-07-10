@@ -19,20 +19,22 @@ func fatalIf(err error) {
 	}
 }
 
+var ErrMissingServiceInstanceArg = errors.New("missing SERVICE_INSTANCE")
+
+func ArgsExtractServiceInstanceName(args []string) (string, error) {
+	if len(args) < 2 {
+		return "", ErrMissingServiceInstanceArg
+	}
+
+	return args[1], nil
+}
+
 /**
  *	This is the struct implementing the interface defined by the core CLI. It can
  *	be found at  "https://github.com/cloudfoundry/cli/blob/master/plugin/plugin.go"
  *
  */
 type CfServiceJumperPlugin struct{}
-
-func (c *CfServiceJumperPlugin) ExtractServiceInstanceName(args []string) (string, error) {
-	if len(args) < 2 {
-		return "", errors.New("missing SERVICE_INSTANCE")
-	}
-
-	return args[1], nil
-}
 
 func (c *CfServiceJumperPlugin) ExtractConnectionId(args []string) (string, error) {
 	if len(args) < 3 {
@@ -169,7 +171,7 @@ func (c *CfServiceJumperPlugin) ListForwards(cliConnection plugin.CliConnection,
  *	1 should the plugin exits nonzero.
  */
 func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []string) {
-	serviceInstanceName, err := c.ExtractServiceInstanceName(args)
+	serviceInstanceName, err := ArgsExtractServiceInstanceName(args)
 	fatalIf(err)
 
 	serviceGuid, err := c.FetchServiceGuid(cliConnection, serviceInstanceName)
