@@ -8,8 +8,7 @@ to create, delete and list forwards to services.
 ### Prerequisites
 
 ```shell
-go get github.com/cloudfoundry/cli/plugin
-go get github.com/parnurzeal/gorequest
+go get
 ```
 
 ### Build, Install & Uninstall
