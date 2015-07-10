@@ -21,6 +21,10 @@ func fatalIf(err error) {
 
 var ErrMissingServiceInstanceArg = errors.New("missing SERVICE_INSTANCE")
 var ErrMissingConnectionId = errors.New("missing CONNECTION_ID")
+var ErrCfServiceJumperEndpointGetFailed = errors.New("Failed to fetch cf service jumper api endpoint")
+var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("cf service jumper api endpoint status code != 200")
+var ErrCfServiceJumperEndpointUnmarshal = errors.New("cf service jumper api endpoint unmarshal failed")
+var ErrCfServiceJumperEndpointNotPresent = errors.New("cf service jumper api endpoint not present")
 
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
 	if len(args) < 2 {
@@ -38,6 +42,36 @@ func ArgsExtractConnectionId(args []string) (string, error) {
 	return args[2], nil
 }
 
+func FetchCfServiceJumperApiEndpoint(apiEndpoint string) (string, error) {
+	url := fmt.Sprintf("%s/v2/info", apiEndpoint)
+
+	request := gorequest.New()
+	resp, body, errs := request.Get(url).End()
+
+	if len(errs) > 0 {
+		return "", ErrCfServiceJumperEndpointGetFailed
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", ErrCfServiceJumperEndpointStatusCodeWrong
+	}
+
+	type CfInfo struct {
+		Custom map[string]string `json:"custom"`
+	}
+	var cfInfo CfInfo
+	err := json.Unmarshal([]byte(body), &cfInfo)
+	if err != nil {
+		return "", ErrCfServiceJumperEndpointUnmarshal
+	}
+
+	serviceJumperEndpoint := cfInfo.Custom["service_jumper_endpoint"]
+	if len(serviceJumperEndpoint) < 1 {
+		return "", ErrCfServiceJumperEndpointNotPresent
+	}
+
+	return serviceJumperEndpoint, nil
+}
+
 /**
  *	This is the struct implementing the interface defined by the core CLI. It can
  *	be found at  "https://github.com/cloudfoundry/cli/blob/master/plugin/plugin.go"
@@ -53,42 +87,6 @@ func (c *CfServiceJumperPlugin) FetchServiceGuid(cliConnection plugin.CliConnect
 	service_guid := strings.Trim(cmdOutput[0], " \n")
 
 	return service_guid, nil
-}
-
-func (c *CfServiceJumperPlugin) FetchCfServiceJumperApiEndpoint(cliConnection plugin.CliConnection, serviceGuid string) (string, error) {
-	apiEndpoint, err := cliConnection.ApiEndpoint()
-	if err != nil {
-		return "", err
-
-	}
-
-	url := fmt.Sprintf("%s/v2/info", apiEndpoint)
-
-	request := gorequest.New()
-	resp, body, errs := request.Get(url).End()
-
-	if len(errs) > 0 {
-		return "", errors.New(fmt.Sprintf("Failed to fetch cf service jumper api endpoint. %s", errs[0].Error()))
-	}
-	if resp.StatusCode != http.StatusOK {
-		return "", errors.New("Failed to fetch cf api endpoint (http status != 200)")
-	}
-
-	type CfInfo struct {
-		Custom map[string]string `json:"custom"`
-	}
-	var cfInfo CfInfo
-	err = json.Unmarshal([]byte(body), &cfInfo)
-
-	if err != nil {
-		return "", errors.New(fmt.Sprintf("Failed to fetch cf service jumper api endpoint. %s", err.Error()))
-	}
-
-	serviceJumperEndpoint := cfInfo.Custom["service_jumper_endpoint"]
-	if len(serviceJumperEndpoint) < 1 {
-		return "", errors.New("Failed to fetch cf service jumper api endpoint")
-	}
-	return serviceJumperEndpoint, nil
 }
 
 func (c *CfServiceJumperPlugin) CreateForward(cliConnection plugin.CliConnection, serviceGuid string, cfServiceJumperApiEndpoint string) error {
@@ -178,7 +176,10 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	serviceGuid, err := c.FetchServiceGuid(cliConnection, serviceInstanceName)
 	fatalIf(err)
 
-	cfServiceJumperApiEndpoint, err := c.FetchCfServiceJumperApiEndpoint(cliConnection, serviceGuid)
+	apiEndpoint, err := cliConnection.ApiEndpoint()
+	fatalIf(err)
+
+	cfServiceJumperApiEndpoint, err := FetchCfServiceJumperApiEndpoint(apiEndpoint)
 	fatalIf(err)
 
 	err = nil
