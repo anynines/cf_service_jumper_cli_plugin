@@ -72,6 +72,43 @@ var _ = Describe("main", func() {
 			_, err := FetchCfServiceJumperApiEndpoint(fakeEndpointServer.URL)
 			Expect(err).To(Equal(ErrCfServiceJumperEndpointNotPresent))
 		})
+	})
 
+	Describe("create forward", func() {
+		It("returns ForwardDataSet", func() {
+			fakeServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != "POST" {
+					panic(fmt.Sprintf("fake server: verb POST expected", r.Method))
+				}
+
+				jsonStr := `{ "hosts": ["10.100.0.60:27017", "10.100.0.61:27017"], "sb_credentials": "{}", "binding_id": "1234" }`
+				fmt.Fprintln(w, jsonStr)
+			}))
+			p := CfServiceJumperPlugin{
+				CfServiceJumperApiEndpoint: fakeServer.URL,
+			}
+
+			forwardDataSet, err := p.CreateForward("serviceGuid")
+			Expect(err).To(BeNil())
+			expectedForwardDataSet := ForwardDataSet{
+				Hosts:         []string{"10.100.0.60:27017", "10.100.0.61:27017"},
+				SbCredentials: "{}",
+				BindingId:     "1234",
+			}
+			Expect(forwardDataSet).To(Equal(expectedForwardDataSet))
+		})
+
+		It("errors if json broken", func() {
+			fakeServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				jsonStr := `{ "hosts": {} }`
+				fmt.Fprintln(w, jsonStr)
+			}))
+			p := CfServiceJumperPlugin{
+				CfServiceJumperApiEndpoint: fakeServer.URL,
+			}
+
+			_, err := p.CreateForward("serviceGuid")
+			Expect(err).To(Equal(ErrCfServiceJumperRequestUnmarshal))
+		})
 	})
 })

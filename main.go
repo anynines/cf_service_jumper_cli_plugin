@@ -26,8 +26,15 @@ var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("cf service jumper ap
 var ErrCfServiceJumperEndpointUnmarshal = errors.New("cf service jumper api endpoint unmarshal failed")
 var ErrCfServiceJumperEndpointNotPresent = errors.New("cf service jumper api endpoint not present")
 
-var ErrCfServiceJumperRequestFailed = errors.New("Failed cf_service_jumper request")
-var ErrCfServiceJumperRequestResult = errors.New("Failed cf_service_jumper request status != 200")
+var ErrCfServiceJumperRequestFailed = errors.New("cf service jumper request failed")
+var ErrCfServiceJumperRequestResult = errors.New("cf service jumper request status != 200")
+var ErrCfServiceJumperRequestUnmarshal = errors.New("cf service jumper request unmarshal failed")
+
+type ForwardDataSet struct {
+	Hosts         []string `json:"hosts"`
+	SbCredentials string   `json:"sb_credentials"`
+	BindingId     string   `json:"binding_id"`
+}
 
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
 	if len(args) < 2 {
@@ -95,21 +102,26 @@ func (c *CfServiceJumperPlugin) FetchServiceGuid(cliConnection plugin.CliConnect
 	return service_guid, nil
 }
 
-func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string) error {
+func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string) (ForwardDataSet, error) {
+	var forwardDataSet ForwardDataSet
+
 	path := fmt.Sprintf("/services/%s/forwards", serviceGuid)
 	url := fmt.Sprintf("%s%s", c.CfServiceJumperApiEndpoint, path)
 
 	request := gorequest.New()
 	resp, body, errs := request.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
-		return ErrCfServiceJumperRequestFailed
+		return forwardDataSet, ErrCfServiceJumperRequestFailed
 	}
 	if resp.StatusCode != http.StatusOK {
-		return ErrCfServiceJumperRequestResult
+		return forwardDataSet, ErrCfServiceJumperRequestResult
 	}
 
-	fmt.Println(body)
-	return nil
+	err := json.Unmarshal([]byte(body), &forwardDataSet)
+	if err != nil {
+		return forwardDataSet, ErrCfServiceJumperRequestUnmarshal
+	}
+	return forwardDataSet, nil
 }
 
 func (c *CfServiceJumperPlugin) DeleteForward(serviceGuid string, connectionId string) error {
@@ -178,7 +190,9 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 
 	err = nil
 	if args[0] == "create-forward" {
-		err = c.CreateForward(serviceGuid)
+		forwardInfo, err := c.CreateForward(serviceGuid)
+		fatalIf(err)
+		_ = forwardInfo
 	} else if args[0] == "delete-forward" {
 		connectionId, err := ArgsExtractConnectionId(args)
 		fatalIf(err)
