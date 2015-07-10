@@ -79,6 +79,7 @@ func FetchCfServiceJumperApiEndpoint(apiEndpoint string) (string, error) {
  */
 type CfServiceJumperPlugin struct {
 	CfServiceJumperAccessToken string
+	CfServiceJumperApiEndpoint string
 }
 
 func (c *CfServiceJumperPlugin) FetchServiceGuid(cliConnection plugin.CliConnection, serviceInstanceName string) (string, error) {
@@ -91,9 +92,9 @@ func (c *CfServiceJumperPlugin) FetchServiceGuid(cliConnection plugin.CliConnect
 	return service_guid, nil
 }
 
-func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string, cfServiceJumperApiEndpoint string) error {
+func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string) error {
 	path := fmt.Sprintf("/services/%s/forwards", serviceGuid)
-	url := fmt.Sprintf("%s%s", cfServiceJumperApiEndpoint, path)
+	url := fmt.Sprintf("%s%s", c.CfServiceJumperApiEndpoint, path)
 
 	request := gorequest.New()
 	resp, body, errs := request.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
@@ -108,9 +109,9 @@ func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string, cfServiceJumpe
 	return nil
 }
 
-func (c *CfServiceJumperPlugin) DeleteForward(serviceGuid string, connectionId string, cfServiceJumperApiEndpoint string) error {
+func (c *CfServiceJumperPlugin) DeleteForward(serviceGuid string, connectionId string) error {
 	path := fmt.Sprintf("/services/%s/forwards/%s", serviceGuid, connectionId)
-	url := fmt.Sprintf("%s%s", cfServiceJumperApiEndpoint, path)
+	url := fmt.Sprintf("%s%s", c.CfServiceJumperApiEndpoint, path)
 
 	request := gorequest.New()
 	resp, body, errs := request.Delete(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
@@ -125,9 +126,9 @@ func (c *CfServiceJumperPlugin) DeleteForward(serviceGuid string, connectionId s
 	return nil
 }
 
-func (c *CfServiceJumperPlugin) ListForwards(serviceGuid string, cfServiceJumperApiEndpoint string) error {
+func (c *CfServiceJumperPlugin) ListForwards(serviceGuid string) error {
 	path := fmt.Sprintf("/services/%s/forwards/", serviceGuid)
-	url := fmt.Sprintf("%s%s", cfServiceJumperApiEndpoint, path)
+	url := fmt.Sprintf("%s%s", c.CfServiceJumperApiEndpoint, path)
 
 	request := gorequest.New()
 	resp, body, errs := request.Get(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
@@ -169,18 +170,18 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	apiEndpoint, err := cliConnection.ApiEndpoint()
 	fatalIf(err)
 
-	cfServiceJumperApiEndpoint, err := FetchCfServiceJumperApiEndpoint(apiEndpoint)
+	c.CfServiceJumperApiEndpoint, err = FetchCfServiceJumperApiEndpoint(apiEndpoint)
 	fatalIf(err)
 
 	err = nil
 	if args[0] == "create-forward" {
-		err = c.CreateForward(serviceGuid, cfServiceJumperApiEndpoint)
+		err = c.CreateForward(serviceGuid)
 	} else if args[0] == "delete-forward" {
 		connectionId, err := ArgsExtractConnectionId(args)
 		fatalIf(err)
-		err = c.DeleteForward(serviceGuid, connectionId, cfServiceJumperApiEndpoint)
+		err = c.DeleteForward(serviceGuid, connectionId)
 	} else if args[0] == "list-forwards" {
-		err = c.ListForwards(serviceGuid, cfServiceJumperApiEndpoint)
+		err = c.ListForwards(serviceGuid)
 	}
 	fatalIf(err)
 }
