@@ -26,6 +26,9 @@ var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("cf service jumper ap
 var ErrCfServiceJumperEndpointUnmarshal = errors.New("cf service jumper api endpoint unmarshal failed")
 var ErrCfServiceJumperEndpointNotPresent = errors.New("cf service jumper api endpoint not present")
 
+var ErrCfServiceJumperRequestFailed = errors.New("Failed cf_service_jumper request")
+var ErrCfServiceJumperRequestResult = errors.New("Failed cf_service_jumper request status != 200")
+
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
 	if len(args) < 2 {
 		return "", ErrMissingServiceInstanceArg
@@ -99,10 +102,10 @@ func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string) error {
 	request := gorequest.New()
 	resp, body, errs := request.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
-		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. %s", errs[0].Error()))
+		return ErrCfServiceJumperRequestFailed
 	}
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. status != 200 ; body = %s", body))
+		return ErrCfServiceJumperRequestResult
 	}
 
 	fmt.Println(body)
