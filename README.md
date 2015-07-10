@@ -9,6 +9,8 @@ to create, delete and list forwards to services.
 
 ```shell
 go get
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega
 ```
 
 ### Build, Install & Uninstall
@@ -19,6 +21,12 @@ go build -o CfServiceJumperPlugin
 cf install-plugin CfServiceJumperPlugin  
 ```
 
+### Testing
+
+We're using [ginko](https://github.com/onsi/ginkgo) as testing framework.
+ ```shell
+go test
+```
 
 ## Usage
 ```shell
