@@ -1,6 +1,6 @@
 # Cf Service Jumper CLI Plugin
 
-This CF cli plugin uses the CF Service Jumper service https://github.com/anynines/cf_service_jumper
+This CF cli plugin uses the [CF Service Jumper service](https://github.com/a9hcp/cf_service_jumper)
 to create, delete and list forwards to services.
 
 ## Development
