@@ -2,11 +2,12 @@ package main_test
 
 import (
 	"fmt"
-	. "github.com/anynines/cf_service_jumper_cli_plugin"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"net/http"
 	"net/http/httptest"
+
+	. "github.com/a9hcp/cf_service_jumper_cli_plugin"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("main", func() {
