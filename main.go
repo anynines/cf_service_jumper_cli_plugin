@@ -25,10 +25,21 @@ var ErrCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch info
 var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200.")
 var ErrCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed.")
 
+type ForwardSbCredentials struct {
+	Uri             string `json:"uri"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	DefaultDatabase string `json:"default_database"`
+	Database        string `json:"database"`
+}
+
+type ForwardCredentials struct {
+	SbCredentials ForwardSbCredentials `json:"sb_credentials"`
+}
+
 type ForwardDataSet struct {
-	Hosts         []string `json:"hosts"`
-	SbCredentials string   `json:"sb_credentials"`
-	BindingId     string   `json:"binding_id"`
+	Hosts       []string           `json:"public_uris"`
+	Credentials ForwardCredentials `json:"credentials"`
 }
 
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
