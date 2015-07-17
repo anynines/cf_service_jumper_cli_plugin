@@ -166,6 +166,10 @@ func (c *CfServiceJumperPlugin) ListForwards(serviceGuid string) error {
  *	1 should the plugin exits nonzero.
  */
 func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []string) {
+	if args[0] == "CLI-MESSAGE-UNINSTALL" {
+		os.Exit(0)
+	}
+
 	serviceInstanceName, err := ArgsExtractServiceInstanceName(args)
 	fatalIf(err)
 
