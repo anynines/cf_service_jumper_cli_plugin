@@ -126,10 +126,10 @@ func (c *CfServiceJumperPlugin) DeleteForward(serviceGuid string, connectionId s
 	request := gorequest.New()
 	resp, body, errs := request.Delete(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
-		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. %s", errs[0].Error()))
+		return fmt.Errorf("[ERR] Failed cf_service_jumper request. %s", errs[0].Error())
 	}
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. status != 200 ; body = %s", body))
+		return fmt.Errorf("[ERR] Failed cf_service_jumper request. HTTP status code != 200.\n%s", body)
 	}
 
 	fmt.Println(body)
@@ -143,10 +143,10 @@ func (c *CfServiceJumperPlugin) ListForwards(serviceGuid string) error {
 	request := gorequest.New()
 	resp, body, errs := request.Get(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
-		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. %s", errs[0].Error()))
+		return fmt.Errorf("Failed cf_service_jumper request. %s", errs[0].Error())
 	}
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("Failed cf_service_jumper request. status != 200 ; body = %s", body))
+		return fmt.Errorf("Failed cf_service_jumper request. HTTP status code != 200.\n%s", body)
 	}
 
 	fmt.Println(body)
