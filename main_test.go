@@ -101,4 +101,28 @@ var _ = Describe("main", func() {
 			Expect(forwardDataSet).To(Equal(expectedForwardDataSet))
 		})
 	})
+
+	Describe("ForwardDataSet", func() {
+		Describe("CredentialsMap", func() {
+			It("return a human readble string", func() {
+				fds := ForwardDataSet{
+					Credentials: ForwardCredentials{
+						SbCredentials: ForwardSbCredentials{
+							Uri:             "theuri",
+							Username:        "username",
+							Password:        "password",
+							DefaultDatabase: "defaultdatabase",
+							Database:        "database",
+						},
+					},
+				}
+				credentials := fds.CredentialsMap()
+				Expect(credentials["URI"]).To(Equal("theuri"))
+				Expect(credentials["Username"]).To(Equal("username"))
+				Expect(credentials["Password"]).To(Equal("password"))
+				Expect(credentials["Default database"]).To(Equal("defaultdatabase"))
+				Expect(credentials["Database"]).To(Equal("database"))
+			})
+		})
+	})
 })

@@ -33,6 +33,28 @@ type ForwardSbCredentials struct {
 	Database        string `json:"database"`
 }
 
+func (self ForwardSbCredentials) CredentialsMap() map[string]string {
+	credentials := make(map[string]string)
+
+	if len(self.Uri) > 0 {
+		credentials["URI"] = self.Uri
+	}
+	if len(self.Username) > 0 {
+		credentials["Username"] = self.Username
+	}
+	if len(self.Password) > 0 {
+		credentials["Password"] = self.Password
+	}
+	if len(self.DefaultDatabase) > 0 {
+		credentials["Default database"] = self.DefaultDatabase
+	}
+	if len(self.Database) > 0 {
+		credentials["Database"] = self.Database
+	}
+
+	return credentials
+}
+
 type ForwardCredentials struct {
 	SbCredentials ForwardSbCredentials `json:"sb_credentials"`
 }
@@ -40,6 +62,11 @@ type ForwardCredentials struct {
 type ForwardDataSet struct {
 	Hosts       []string           `json:"public_uris"`
 	Credentials ForwardCredentials `json:"credentials"`
+}
+
+// Returns map with credential information
+func (self ForwardDataSet) CredentialsMap() map[string]string {
+	return self.Credentials.SbCredentials.CredentialsMap()
 }
 
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
@@ -198,7 +225,8 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	if args[0] == "create-forward" {
 		forwardInfo, err := c.CreateForward(serviceGuid)
 		fatalIf(err)
-		_ = forwardInfo
+		generalCredentials := forwardInfo.CredentialsMap()
+		_ = generalCredentials
 	} else if args[0] == "delete-forward" {
 		connectionId, err := ArgsExtractConnectionId(args)
 		fatalIf(err)
