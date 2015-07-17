@@ -60,7 +60,7 @@ var _ = Describe("main", func() {
 			}))
 
 			_, err := FetchCfServiceJumperApiEndpoint(fakeEndpointServer.URL)
-			Expect(err).To(Equal(ErrCfServiceJumperEndpointUnmarshal))
+			Expect(err).ToNot(BeNil())
 		})
 
 		It("errors if cf service humper endpoint not present", func() {
@@ -108,7 +108,7 @@ var _ = Describe("main", func() {
 			}
 
 			_, err := p.CreateForward("serviceGuid")
-			Expect(err).To(Equal(ErrCfServiceJumperRequestUnmarshal))
+			Expect(err).ToNot(BeNil())
 		})
 	})
 })

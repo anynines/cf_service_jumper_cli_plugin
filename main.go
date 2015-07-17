@@ -19,16 +19,11 @@ func fatalIf(err error) {
 	}
 }
 
-var ErrMissingServiceInstanceArg = errors.New("missing SERVICE_INSTANCE")
-var ErrMissingConnectionId = errors.New("missing CONNECTION_ID")
-var ErrCfServiceJumperEndpointGetFailed = errors.New("Failed to fetch cf service jumper api endpoint")
-var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("cf service jumper api endpoint status code != 200")
-var ErrCfServiceJumperEndpointUnmarshal = errors.New("cf service jumper api endpoint unmarshal failed")
-var ErrCfServiceJumperEndpointNotPresent = errors.New("cf service jumper api endpoint not present")
-
-var ErrCfServiceJumperRequestFailed = errors.New("cf service jumper request failed")
-var ErrCfServiceJumperRequestResult = errors.New("cf service jumper request status != 200")
-var ErrCfServiceJumperRequestUnmarshal = errors.New("cf service jumper request unmarshal failed")
+var ErrMissingServiceInstanceArg = errors.New("[ERR] missing SERVICE_INSTANCE")
+var ErrMissingConnectionId = errors.New("[ERR] missing CONNECTION_ID")
+var ErrCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint.")
+var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200.")
+var ErrCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed.")
 
 type ForwardDataSet struct {
 	Hosts         []string `json:"hosts"`
@@ -71,7 +66,7 @@ func FetchCfServiceJumperApiEndpoint(apiEndpoint string) (string, error) {
 	var cfInfo CfInfo
 	err := json.Unmarshal([]byte(body), &cfInfo)
 	if err != nil {
-		return "", ErrCfServiceJumperEndpointUnmarshal
+		return "", fmt.Errorf("[ERR] cf service jumper api endpoint unmarshal failed. %s", err)
 	}
 
 	serviceJumperEndpoint := cfInfo.Custom["service_jumper_endpoint"]
@@ -111,15 +106,15 @@ func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string) (ForwardDataSe
 	request := gorequest.New()
 	resp, body, errs := request.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
-		return forwardDataSet, ErrCfServiceJumperRequestFailed
+		return forwardDataSet, fmt.Errorf("[ERR] cf service jumper request failed. %s", errs[0])
 	}
 	if resp.StatusCode != http.StatusOK {
-		return forwardDataSet, ErrCfServiceJumperRequestResult
+		return forwardDataSet, fmt.Errorf("[ERR] cf service jumper request failed. status != 200.\n%s", body)
 	}
 
 	err := json.Unmarshal([]byte(body), &forwardDataSet)
 	if err != nil {
-		return forwardDataSet, ErrCfServiceJumperRequestUnmarshal
+		return forwardDataSet, fmt.Errorf("[ERR] cf service jumper request failed. unmarshal error: %s", err)
 	}
 	return forwardDataSet, nil
 }
