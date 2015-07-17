@@ -10,6 +10,8 @@ import (
 
 	"github.com/cloudfoundry/cli/plugin"
 	"github.com/parnurzeal/gorequest"
+
+	"github.com/a9hcp/cf_service_jumper_cli_plugin/xtunnel"
 )
 
 func fatalIf(err error) {
@@ -177,12 +179,23 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	c.CfServiceJumperApiEndpoint, err = FetchCfServiceJumperApiEndpoint(apiEndpoint)
 	fatalIf(err)
 
-	err = nil
 	if args[0] == "create-forward" {
 		forwardInfo, err := c.CreateForward(serviceGuid)
 		fatalIf(err)
-		generalCredentials := forwardInfo.CredentialsMap()
-		_ = generalCredentials
+		credentials := forwardInfo.CredentialsMap()
+
+		xt := xtunnel.NewUnencryptedXTunnel(forwardInfo.Hosts[0])
+		localListenAddress, err := xt.Listen()
+		fatalIf(err)
+
+		fmt.Println(fmt.Sprintf("Listening on %s", localListenAddress))
+		fmt.Println("\nCredentials:")
+		for credentialKey, credentialValue := range credentials {
+			fmt.Println(fmt.Sprintf("%s: %s", credentialKey, credentialValue))
+		}
+
+		err = xt.Serve() // forever
+		fatalIf(err)
 	} else if args[0] == "delete-forward" {
 		connectionId, err := ArgsExtractConnectionId(args)
 		fatalIf(err)

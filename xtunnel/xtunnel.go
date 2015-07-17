@@ -1,7 +1,7 @@
 package xtunnel
 
 import (
-	"log"
+	"fmt"
 	"net"
 
 	"github.com/raff/tls-ext"
@@ -13,6 +13,10 @@ type XTunnel struct {
 	remoteService string
 	localListener net.Listener
 	config        *tls.Config
+}
+
+func NewUnencryptedXTunnel(remoteService string) *XTunnel {
+	return createXTunnel(":0", remoteService, nil)
 }
 
 // NewXTunnel creates a new XTunnel instance using certificate based TLS
@@ -41,27 +45,27 @@ func NewXTunnelPSK(localService, remoteService, pskIdentity, pskey string) *XTun
 	return createXTunnel(localService, remoteService, config)
 }
 
-// ListenAndServe creates the listening socket and waits for
-// client connections to be processed. Blocks!
-func (xt *XTunnel) ListenAndServe() error {
+// Listen creates the listening socket.
+func (xt *XTunnel) Listen() (string, error) {
 	var err error
 	xt.localListener, err = net.Listen("tcp", xt.localService)
-
 	if err != nil {
-		return err
+		return "", fmt.Errorf("[ERR] Failed to listen on a random tcp socket. %s", err)
 	}
+	return xt.localListener.Addr().String(), nil
+}
 
+// Serve waits for client connections to be processed. Blocks!
+func (xt *XTunnel) Serve() error {
 	for {
 		// wait until a client connects
 		conn, err := xt.localListener.Accept()
-		if err == nil {
-			log.Print("Accept(.) error: ", err)
+		if err != nil {
 			return err
 		} else {
 			// process the clients request
 			err = xt.createConnPipe(conn)
 			if err != nil {
-				log.Print("Could not connect to remote socket: ", err)
 				return err
 			}
 		}
@@ -85,7 +89,13 @@ func createXTunnel(localService, remoteService string, config *tls.Config) *XTun
 }
 
 func (xt *XTunnel) createConnPipe(localConn net.Conn) error {
-	remoteConn, err := tls.Dial("tcp", xt.remoteService, xt.config)
+	var err error
+	var remoteConn net.Conn
+	if xt.config == nil {
+		remoteConn, err = net.Dial("tcp", xt.remoteService)
+	} else {
+		remoteConn, err = tls.Dial("tcp", xt.remoteService, xt.config)
+	}
 
 	if err != nil {
 		return err
