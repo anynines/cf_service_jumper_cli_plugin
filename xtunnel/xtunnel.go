@@ -16,7 +16,7 @@ type XTunnel struct {
 }
 
 func NewUnencryptedXTunnel(remoteService string) *XTunnel {
-	return createXTunnel(":0", remoteService, nil)
+	return createXTunnel("localhost:0", remoteService, nil)
 }
 
 // NewXTunnel creates a new XTunnel instance using certificate based TLS

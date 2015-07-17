@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/cloudfoundry/cli/plugin"
 	"github.com/parnurzeal/gorequest"
@@ -194,8 +196,21 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 			fmt.Println(fmt.Sprintf("%s: %s", credentialKey, credentialValue))
 		}
 
-		err = xt.Serve() // forever
-		fatalIf(err)
+		go func() {
+			xt.Serve()
+		}()
+
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM)
+
+		_ = <-c
+		err = xt.Shutdown()
+		if err != nil {
+			fmt.Println("[ERR] Failed to shutdown listen socket.%s", err)
+		}
+
+		fmt.Println("\nRemember to 'cf delete-forward'!")
+
 	} else if args[0] == "delete-forward" {
 		connectionId, err := ArgsExtractConnectionId(args)
 		fatalIf(err)
