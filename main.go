@@ -23,39 +23,42 @@ func fatalIf(err error) {
 	}
 }
 
-var ErrMissingServiceInstanceArg = errors.New("[ERR] missing SERVICE_INSTANCE")
-var ErrMissingConnectionId = errors.New("[ERR] missing CONNECTION_ID")
-var ErrCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint.")
-var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200.")
-var ErrCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed.")
+var errMissingServiceInstanceArg = errors.New("[ERR] missing SERVICE_INSTANCE")
+var errMissingConnectionID = errors.New("[ERR] missing CONNECTION_ID")
+var errCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint")
+var errCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200")
+var errCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed")
 
+// ArgsExtractServiceInstanceName extract service instance name from args
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
 	if len(args) < 2 {
-		return "", ErrMissingServiceInstanceArg
+		return "", errMissingServiceInstanceArg
 	}
 
 	return args[1], nil
 }
 
-func ArgsExtractConnectionId(args []string) (string, error) {
+// ArgsExtractConnectionID extracts connection ID from args
+func ArgsExtractConnectionID(args []string) (string, error) {
 	if len(args) < 3 {
-		return "", ErrMissingConnectionId
+		return "", errMissingConnectionID
 	}
 
 	return args[2], nil
 }
 
-func FetchCfServiceJumperApiEndpoint(apiEndpoint string) (string, error) {
-	url := fmt.Sprintf("%s/v2/info", apiEndpoint)
+// FetchCfServiceJumperAPIEndpoint fetches the Service Jumper API endpoint
+func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string) (string, error) {
+	url := fmt.Sprintf("%s/v2/info", cfAPIEndpoint)
 
 	request := gorequest.New()
 	resp, body, errs := request.Get(url).End()
 
 	if len(errs) > 0 {
-		return "", ErrCfServiceJumperEndpointGetFailed
+		return "", errCfServiceJumperEndpointGetFailed
 	}
 	if resp.StatusCode != http.StatusOK {
-		return "", ErrCfServiceJumperEndpointStatusCodeWrong
+		return "", errCfServiceJumperEndpointStatusCodeWrong
 	}
 
 	type CfInfo struct {
@@ -69,37 +72,36 @@ func FetchCfServiceJumperApiEndpoint(apiEndpoint string) (string, error) {
 
 	serviceJumperEndpoint := cfInfo.Custom["service_jumper_endpoint"]
 	if len(serviceJumperEndpoint) < 1 {
-		return "", ErrCfServiceJumperEndpointNotPresent
+		return "", errCfServiceJumperEndpointNotPresent
 	}
 
 	return serviceJumperEndpoint, nil
 }
 
-/**
- *	This is the struct implementing the interface defined by the core CLI. It can
- *	be found at  "https://github.com/cloudfoundry/cli/blob/master/plugin/plugin.go"
- *
- */
+// CfServiceJumperPlugin This is the struct implementing the interface defined by the core CLI. It can
+// be found at  "https://github.com/cloudfoundry/cli/blob/master/plugin/plugin.go"
 type CfServiceJumperPlugin struct {
 	CfServiceJumperAccessToken string
-	CfServiceJumperApiEndpoint string
+	CfServiceJumperAPIEndpoint string
 }
 
-func (c *CfServiceJumperPlugin) FetchServiceGuid(cliConnection plugin.CliConnection, serviceInstanceName string) (string, error) {
+// FetchServiceGUID fetch service GUID by service name
+func (c *CfServiceJumperPlugin) FetchServiceGUID(cliConnection plugin.CliConnection, serviceInstanceName string) (string, error) {
 	cmdOutput, err := cliConnection.CliCommandWithoutTerminalOutput("service", serviceInstanceName, "--guid")
 	if err != nil {
-		return "", errors.New(fmt.Sprintf("Failed to get service guid. %s", err.Error()))
+		return "", fmt.Errorf("Failed to get service guid. %s", err.Error())
 	}
-	service_guid := strings.Trim(cmdOutput[0], " \n")
+	serviceGUID := strings.Trim(cmdOutput[0], " \n")
 
-	return service_guid, nil
+	return serviceGUID, nil
 }
 
-func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string) (ForwardDataSet, error) {
+// CreateForward create forward for service
+func (c *CfServiceJumperPlugin) CreateForward(serviceGUID string) (ForwardDataSet, error) {
 	var forwardDataSet ForwardDataSet
 
-	path := fmt.Sprintf("/services/%s/forwards", serviceGuid)
-	url := fmt.Sprintf("%s%s", c.CfServiceJumperApiEndpoint, path)
+	path := fmt.Sprintf("/services/%s/forwards", serviceGUID)
+	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
 
 	request := gorequest.New()
 	resp, body, errs := request.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
@@ -117,9 +119,10 @@ func (c *CfServiceJumperPlugin) CreateForward(serviceGuid string) (ForwardDataSe
 	return forwardDataSet, nil
 }
 
-func (c *CfServiceJumperPlugin) DeleteForward(serviceGuid string, connectionId string) error {
-	path := fmt.Sprintf("/services/%s/forwards/%s", serviceGuid, connectionId)
-	url := fmt.Sprintf("%s%s", c.CfServiceJumperApiEndpoint, path)
+// DeleteForward delete forward for service
+func (c *CfServiceJumperPlugin) DeleteForward(serviceGUID string, connectionID string) error {
+	path := fmt.Sprintf("/services/%s/forwards/%s", serviceGUID, connectionID)
+	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
 
 	request := gorequest.New()
 	resp, body, errs := request.Delete(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
@@ -134,9 +137,10 @@ func (c *CfServiceJumperPlugin) DeleteForward(serviceGuid string, connectionId s
 	return nil
 }
 
-func (c *CfServiceJumperPlugin) ListForwards(serviceGuid string) error {
-	path := fmt.Sprintf("/services/%s/forwards/", serviceGuid)
-	url := fmt.Sprintf("%s%s", c.CfServiceJumperApiEndpoint, path)
+// ListForwards list all forwards for the given service
+func (c *CfServiceJumperPlugin) ListForwards(serviceGUID string) error {
+	path := fmt.Sprintf("/services/%s/forwards/", serviceGUID)
+	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
 
 	request := gorequest.New()
 	resp, body, errs := request.Get(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
@@ -151,20 +155,18 @@ func (c *CfServiceJumperPlugin) ListForwards(serviceGuid string) error {
 	return nil
 }
 
-/**
- *	This function must be implemented by any plugin because it is part of the
- *	plugin interface defined by the core CLI.
- *
- *	Run(....) is the entry point when the core CLI is invoking a command defined
- *	by a plugin. The first parameter, plugin.CliConnection, is a struct that can
- *	be used to invoke cli commands. The second paramter, args, is a slice of
- *	strings. args[0] will be the name of the command, and will be followed by
- *	any additional arguments a cli user typed in.
- *
- *	Any error handling should be handled with the plugin itself (this means printing
- *	user facing errors). The CLI will exit 0 if the plugin exits 0 and will exit
- *	1 should the plugin exits nonzero.
- */
+// Run This function must be implemented by any plugin because it is part of the
+// plugin interface defined by the core CLI.
+//
+// Run(....) is the entry point when the core CLI is invoking a command defined
+// by a plugin. The first parameter, plugin.CliConnection, is a struct that can
+// be used to invoke cli commands. The second paramter, args, is a slice of
+// strings. args[0] will be the name of the command, and will be followed by
+// any additional arguments a cli user typed in.
+//
+// Any error handling should be handled with the plugin itself (this means printing
+// user facing errors). The CLI will exit 0 if the plugin exits 0 and will exit
+// 1 should the plugin exits nonzero.
 func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []string) {
 	if args[0] == "CLI-MESSAGE-UNINSTALL" {
 		os.Exit(0)
@@ -173,7 +175,7 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	serviceInstanceName, err := ArgsExtractServiceInstanceName(args)
 	fatalIf(err)
 
-	serviceGuid, err := c.FetchServiceGuid(cliConnection, serviceInstanceName)
+	serviceGUID, err := c.FetchServiceGUID(cliConnection, serviceInstanceName)
 	fatalIf(err)
 
 	c.CfServiceJumperAccessToken, err = cliConnection.AccessToken()
@@ -182,11 +184,11 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	apiEndpoint, err := cliConnection.ApiEndpoint()
 	fatalIf(err)
 
-	c.CfServiceJumperApiEndpoint, err = FetchCfServiceJumperApiEndpoint(apiEndpoint)
+	c.CfServiceJumperAPIEndpoint, err = FetchCfServiceJumperAPIEndpoint(apiEndpoint)
 	fatalIf(err)
 
 	if args[0] == "create-forward" {
-		forwardInfo, err := c.CreateForward(serviceGuid)
+		forwardInfo, err := c.CreateForward(serviceGUID)
 		fatalIf(err)
 		credentials := forwardInfo.CredentialsMap()
 
@@ -210,35 +212,33 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 		_ = <-c
 		err = xt.Shutdown()
 		if err != nil {
-			fmt.Println("[ERR] Failed to shutdown listen socket.%s", err)
+			fmt.Println("[ERR] Failed to shutdown listen socket", err)
 		}
 
 		fmt.Println("\nRemember to 'cf delete-forward'!")
 
 	} else if args[0] == "delete-forward" {
-		connectionId, err := ArgsExtractConnectionId(args)
+		connectionID, err := ArgsExtractConnectionID(args)
 		fatalIf(err)
-		err = c.DeleteForward(serviceGuid, connectionId)
+		err = c.DeleteForward(serviceGUID, connectionID)
 	} else if args[0] == "list-forwards" {
-		err = c.ListForwards(serviceGuid)
+		err = c.ListForwards(serviceGUID)
 	}
 	fatalIf(err)
 }
 
-/**
- *	This function must be implemented as part of the plugin interface
- *	defined by the core CLI.
- *
- *	GetMetadata() returns a PluginMetadata struct. The first field, Name,
- *	determines the name of the plugin which should generally be without spaces.
- *	If there are spaces in the name a user will need to properly quote the name
- *	during uninstall otherwise the name will be treated as seperate arguments.
- *	The second value is a slice of Command structs. Our slice only contains one
- *	Command Struct, but could contain any number of them. The first field Name
- *	defines the command `cf basic-plugin-command` once installed into the CLI. The
- *	second field, HelpText, is used by the core CLI to display help information
- *	to the user in the core commands `cf help`, `cf`, or `cf -h`.
- */
+// GetMetadata must be implemented as part of the plugin interface
+// defined by the core CLI.
+//
+// GetMetadata() returns a PluginMetadata struct. The first field, Name,
+// determines the name of the plugin which should generally be without spaces.
+// If there are spaces in the name a user will need to properly quote the name
+// during uninstall otherwise the name will be treated as seperate arguments.
+// The second value is a slice of Command structs. Our slice only contains one
+// Command Struct, but could contain any number of them. The first field Name
+// defines the command `cf basic-plugin-command` once installed into the CLI. The
+// second field, HelpText, is used by the core CLI to display help information
+// to the user in the core commands `cf help`, `cf`, or `cf -h`.
 func (c *CfServiceJumperPlugin) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
 		Name: "CfServiceJumperPlugin",
