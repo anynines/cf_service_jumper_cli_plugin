@@ -24,20 +24,20 @@ var _ = Describe("main", func() {
 		})
 	})
 
-	Describe("ArgsExtractConnectionId", func() {
+	Describe("ArgsExtractConnectionID", func() {
 		It("errors if less than 2 args", func() {
-			_, err := ArgsExtractConnectionId([]string{"arg0", "arg1"})
-			Expect(err).To(Equal(ErrMissingConnectionId))
+			_, err := ArgsExtractConnectionID([]string{"arg0", "arg1"})
+			Expect(err).To(Equal(ErrMissingConnectionID))
 		})
 
 		It("works with 2 args", func() {
-			connectionId, err := ArgsExtractConnectionId([]string{"arg0", "arg1", "arg2"})
+			connectionId, err := ArgsExtractConnectionID([]string{"arg0", "arg1", "arg2"})
 			Expect(err).To(BeNil())
 			Expect(connectionId).To(Equal("arg2"))
 		})
 	})
 
-	Describe("FetchCfServiceJumperApiEndpoint", func() {
+	Describe("FetchCfServiceJumperAPIEndpoint", func() {
 		It("returns service jumper endpoint", func() {
 			fakeEndpointServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if r.Method != "GET" {
@@ -48,7 +48,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			sjEndpoint, err := FetchCfServiceJumperApiEndpoint(fakeEndpointServer.URL)
+			sjEndpoint, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL)
 			Expect(err).To(BeNil())
 			Expect(sjEndpoint).To(Equal("https://service-jumper.de.a9sservice.eu"))
 		})
@@ -59,7 +59,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			_, err := FetchCfServiceJumperApiEndpoint(fakeEndpointServer.URL)
+			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL)
 			Expect(err).ToNot(BeNil())
 		})
 
@@ -69,7 +69,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			_, err := FetchCfServiceJumperApiEndpoint(fakeEndpointServer.URL)
+			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL)
 			Expect(err).To(Equal(ErrCfServiceJumperEndpointNotPresent))
 		})
 	})
@@ -85,7 +85,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 			p := CfServiceJumperPlugin{
-				CfServiceJumperApiEndpoint: fakeServer.URL,
+				CfServiceJumperAPIEndpoint: fakeServer.URL,
 			}
 
 			forwardDataSet, err := p.CreateForward("serviceGuid")

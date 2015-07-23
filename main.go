@@ -23,16 +23,16 @@ func fatalIf(err error) {
 	}
 }
 
-var errMissingServiceInstanceArg = errors.New("[ERR] missing SERVICE_INSTANCE")
-var errMissingConnectionID = errors.New("[ERR] missing CONNECTION_ID")
+var ErrMissingServiceInstanceArg = errors.New("[ERR] missing SERVICE_INSTANCE")
+var ErrMissingConnectionID = errors.New("[ERR] missing CONNECTION_ID")
 var errCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint")
 var errCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200")
-var errCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed")
+var ErrCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed")
 
 // ArgsExtractServiceInstanceName extract service instance name from args
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
 	if len(args) < 2 {
-		return "", errMissingServiceInstanceArg
+		return "", ErrMissingServiceInstanceArg
 	}
 
 	return args[1], nil
@@ -41,7 +41,7 @@ func ArgsExtractServiceInstanceName(args []string) (string, error) {
 // ArgsExtractConnectionID extracts connection ID from args
 func ArgsExtractConnectionID(args []string) (string, error) {
 	if len(args) < 3 {
-		return "", errMissingConnectionID
+		return "", ErrMissingConnectionID
 	}
 
 	return args[2], nil
@@ -72,7 +72,7 @@ func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string) (string, error) {
 
 	serviceJumperEndpoint := cfInfo.Custom["service_jumper_endpoint"]
 	if len(serviceJumperEndpoint) < 1 {
-		return "", errCfServiceJumperEndpointNotPresent
+		return "", ErrCfServiceJumperEndpointNotPresent
 	}
 
 	return serviceJumperEndpoint, nil
