@@ -8,9 +8,8 @@ to create, delete and list forwards to services.
 ### Prerequisites
 
 ```shell
-go get
-go get github.com/onsi/ginkgo/ginkgo
-go get github.com/onsi/gomega
+go get github.com/tools/godep
+godep restore
 ```
 
 ### Build, Install & Uninstall
