@@ -1,0 +1,42 @@
+{
+	"ImportPath": "cf_service_jumper_cli_plugin",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/a9hcp/cf_service_jumper_cli_plugin",
+			"Rev": "e63bc72b479aa002a26b1473fc746d42482f1036"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry/cli/plugin",
+			"Comment": "v6.12.1-4-g0ce1e35",
+			"Rev": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"ImportPath": "github.com/onsi/ginkgo",
+			"Comment": "v1.2.0-8-g25380c6",
+			"Rev": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"ImportPath": "github.com/onsi/gomega",
+			"Comment": "v1.0-50-gd6c945f",
+			"Rev": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"ImportPath": "github.com/parnurzeal/gorequest",
+			"Comment": "v0.2.5-14-g3ac2238",
+			"Rev": "3ac223894abdc1d3f4fb6b196df15c18b0ed4a18"
+		},
+		{
+			"ImportPath": "github.com/raff/tls-ext",
+			"Rev": "4459e380bb116a78e5ee3d56d298643b03c9ebbf"
+		},
+		{
+			"ImportPath": "github.com/raff/tls-psk",
+			"Rev": "606f79fec3774d6cb6b9af7943bf524b0722a37c"
+		},
+		{
+			"ImportPath": "golang.org/x/net/publicsuffix",
+			"Rev": "d9558e5c97f85372afee28cf2b6059d7d3818919"
+		}
+	]
+}
