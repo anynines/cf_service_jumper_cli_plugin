@@ -31,7 +31,7 @@ func (self ForwardSbCredentials) CredentialsMap() map[string]string {
 }
 
 type ForwardCredentials struct {
-	SbCredentials ForwardSbCredentials `json:"sb_credentials"`
+	Credentials ForwardSbCredentials `json:"credentials"`
 }
 
 type ForwardDataSet struct {
@@ -41,5 +41,5 @@ type ForwardDataSet struct {
 
 // Returns map with credential information
 func (self ForwardDataSet) CredentialsMap() map[string]string {
-	return self.Credentials.SbCredentials.CredentialsMap()
+	return self.Credentials.Credentials.CredentialsMap()
 }
