@@ -81,7 +81,7 @@ var _ = Describe("main", func() {
 					panic(fmt.Sprintf("fake server: verb POST expected", r.Method))
 				}
 
-				jsonStr := `{ "public_uris": ["10.100.0.60:27017", "10.100.0.61:27017"], "credentials": { "sb_credentials": { "username": "the_username", "random_entry": "a_random_entry" } }, "id": "1234" }`
+				jsonStr := `{ "public_uris": ["10.100.0.60:27017", "10.100.0.61:27017"], "credentials": { "credentials": { "username": "the_username", "random_entry": "a_random_entry" } }, "id": "1234" }`
 				fmt.Fprintln(w, jsonStr)
 			}))
 			p := CfServiceJumperPlugin{
@@ -107,7 +107,7 @@ var _ = Describe("main", func() {
 			It("return a human readble string", func() {
 				fds := ForwardDataSet{
 					Credentials: ForwardCredentials{
-						SbCredentials: ForwardSbCredentials{
+						Credentials: ForwardSbCredentials{
 							Uri:             "theuri",
 							Username:        "username",
 							Password:        "password",
