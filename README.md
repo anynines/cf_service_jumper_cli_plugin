@@ -33,3 +33,20 @@ cf create-forward SERVICE_NAME
 cf delete-forward SERVICE_NAME FORWARD_ID
 cf list-forwards SERVICE_NAME
 ```
+
+## Release
+
+Build the release binaries and output to directory `out/`.
+
+```sh
+./bin/build.sh
+```
+
+
+
+[Create a GitHub token](https://help.github.com/articles/creating-an-access-token-for-command-line-use)
+and set it as the env variable `GITHUB_TOKEN`.
+
+```sh
+export GITHUB_TOKEN=...
+```
