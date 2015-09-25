@@ -63,6 +63,8 @@ and set it as the env variable `GITHUB_TOKEN`.
 export GITHUB_TOKEN=...
 ```
 
+Increase version in file `VERSION` if required.
+
 ```sh
 ./bin/release.sh
 ```
