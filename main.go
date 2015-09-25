@@ -6,14 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"os/signal"
 	"strings"
-	"syscall"
 
 	"github.com/cloudfoundry/cli/plugin"
 	"github.com/parnurzeal/gorequest"
-
-	"github.com/a9hcp/cf_service_jumper_cli_plugin/xtunnel"
 )
 
 func fatalIf(err error) {
@@ -192,28 +188,12 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 		fatalIf(err)
 		credentials := forwardInfo.CredentialsMap()
 
-		xt := xtunnel.NewUnencryptedXTunnel(forwardInfo.Hosts[0])
-		localListenAddress, err := xt.Listen()
-		fatalIf(err)
-
-		fmt.Println(fmt.Sprintf("Listening on %s", localListenAddress))
 		fmt.Println("\nCredentials:")
 		for credentialKey, credentialValue := range credentials {
 			fmt.Println(fmt.Sprintf("%s: %s", credentialKey, credentialValue))
 		}
 
-		go func() {
-			xt.Serve()
-		}()
-
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM)
-
-		_ = <-c
-		err = xt.Shutdown()
-		if err != nil {
-			fmt.Println("[ERR] Failed to shutdown listen socket", err)
-		}
+		ListenAndOutputInfo(forwardInfo.Hosts)
 
 		fmt.Println("\nRemember to 'cf delete-forward'!")
 

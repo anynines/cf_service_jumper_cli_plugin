@@ -111,6 +111,10 @@ func (xt *XTunnel) createConnPipe(localConn net.Conn) error {
 	return nil
 }
 
+func (xt XTunnel) LocalAddress() string {
+	return xt.localListener.Addr().String()
+}
+
 // Pipe creates a full-duplex pipe between the two sockets and transfers data from one to the other.
 func Pipe(conn1 net.Conn, conn2 net.Conn) {
 	chan1 := chanFromConn(conn1)
