@@ -23,8 +23,8 @@
 		},
 		{
 			"ImportPath": "github.com/parnurzeal/gorequest",
-			"Comment": "v0.2.5-14-g3ac2238",
-			"Rev": "3ac223894abdc1d3f4fb6b196df15c18b0ed4a18"
+			"Comment": "v0.2.9",
+			"Rev": "1f4e8242ff000cfd0614a19da3b655be4e347f92"
 		},
 		{
 			"ImportPath": "github.com/raff/tls-ext",
