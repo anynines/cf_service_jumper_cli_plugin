@@ -56,11 +56,13 @@ Build the release binaries and output to directory `out/`.
 ./bin/build.sh
 ```
 
-
-
 [Create a GitHub token](https://help.github.com/articles/creating-an-access-token-for-command-line-use)
 and set it as the env variable `GITHUB_TOKEN`.
 
 ```sh
 export GITHUB_TOKEN=...
+```
+
+```sh
+./bin/release.sh
 ```
