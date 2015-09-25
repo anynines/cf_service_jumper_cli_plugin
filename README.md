@@ -65,6 +65,8 @@ export GITHUB_TOKEN=...
 
 Increase version in file `VERSION` if required.
 
+Create a new release with version `VERSION` on the [release page](https://github.com/a9hcp/cf_service_jumper_cli_plugin/releases).
+
 ```sh
 ./bin/release.sh
 ```
