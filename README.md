@@ -3,6 +3,20 @@
 This CF cli plugin uses the [CF Service Jumper service](https://github.com/a9hcp/cf_service_jumper)
 to create, delete and list forwards to services.
 
+## Installation
+
+Get the latest release for your platform from the [release page](https://github.com/a9hcp/cf_service_jumper_cli_plugin/releases).
+
+```
+cf install-plugin cf_service_jumper_cli_plugin_YOUR_OS_AND_ARCH
+```
+
+If you want to remove the plugin, execute
+
+```
+cf uninstall-plugin CfServiceJumperPlugin
+```
+
 ## Development
 
 ### Prerequisites
