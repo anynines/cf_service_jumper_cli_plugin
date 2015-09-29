@@ -193,7 +193,7 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 			fmt.Println(fmt.Sprintf("%s: %s", credentialKey, credentialValue))
 		}
 
-		ListenAndOutputInfo(forwardInfo.Hosts)
+		ListenAndOutputInfo(forwardInfo.Hosts, forwardInfo.SharedSecret)
 
 		fmt.Println("\nRemember to 'cf delete-forward'!")
 

@@ -35,8 +35,9 @@ type ForwardCredentials struct {
 }
 
 type ForwardDataSet struct {
-	Hosts       []string           `json:"public_uris"`
-	Credentials ForwardCredentials `json:"credentials"`
+	Hosts        []string           `json:"public_uris"`
+	SharedSecret string             `json:"shared_secret"`
+	Credentials  ForwardCredentials `json:"credentials"`
 }
 
 // Returns map with credential information

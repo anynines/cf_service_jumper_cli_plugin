@@ -9,12 +9,17 @@ import (
 	"github.com/a9hcp/cf_service_jumper_cli_plugin/xtunnel"
 )
 
-func ListenAndOutputInfo(hosts []string) error {
+func ListenAndOutputInfo(hosts []string, sharedSecret string) error {
 	var err error
+
+	identity, key, err := GetIdentityAndKey(sharedSecret)
+	if err != nil {
+		return err
+	}
 
 	tunnels := make([]*xtunnel.XTunnel, 0)
 	for _, host := range hosts {
-		xt := xtunnel.NewUnencryptedXTunnel(host)
+		xt := xtunnel.NewXTunnelPSK("localhost:0", host, identity, key)
 		localListenAddress, err := xt.Listen()
 		if err != nil {
 			return err
