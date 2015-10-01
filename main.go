@@ -201,10 +201,11 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 		connectionID, err := ArgsExtractConnectionID(args)
 		fatalIf(err)
 		err = c.DeleteForward(serviceGUID, connectionID)
+		fatalIf(err)
 	} else if args[0] == "list-forwards" {
 		err = c.ListForwards(serviceGUID)
+		fatalIf(err)
 	}
-	fatalIf(err)
 }
 
 // GetMetadata must be implemented as part of the plugin interface
