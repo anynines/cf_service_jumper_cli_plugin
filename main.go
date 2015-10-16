@@ -21,8 +21,8 @@ func fatalIf(err error) {
 
 var ErrMissingServiceInstanceArg = errors.New("[ERR] missing SERVICE_INSTANCE")
 var ErrMissingConnectionID = errors.New("[ERR] missing CONNECTION_ID")
-var errCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint")
-var errCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200")
+var ErrCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint")
+var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200")
 var ErrCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed")
 
 // ArgsExtractServiceInstanceName extract service instance name from args
@@ -51,10 +51,10 @@ func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string) (string, error) {
 	resp, body, errs := request.Get(url).End()
 
 	if len(errs) > 0 {
-		return "", errCfServiceJumperEndpointGetFailed
+		return "", ErrCfServiceJumperEndpointGetFailed
 	}
 	if resp.StatusCode != http.StatusOK {
-		return "", errCfServiceJumperEndpointStatusCodeWrong
+		return "", ErrCfServiceJumperEndpointStatusCodeWrong
 	}
 
 	type CfInfo struct {
