@@ -231,7 +231,7 @@ func (c *CfServiceJumperPlugin) GetMetadata() plugin.PluginMetadata {
 		Commands: []plugin.Command{
 			plugin.Command{
 				Name:     "create-forward",
-				HelpText: "Creates forward to service instance.",
+				HelpText: "Creates/Recycles forward to service instance.",
 				UsageDetails: plugin.Usage{
 					Usage: "\n   cf create-forward SERVICE_INSTANCE",
 				},
