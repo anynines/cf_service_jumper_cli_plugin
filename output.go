@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/olekukonko/tablewriter"
 )
@@ -10,7 +11,7 @@ func OutputForwardDataSets(forwardDataSetCollection []ForwardDataSet) {
 	data := make([][]string, len(forwardDataSetCollection))
 	for index, forwardDataSet := range forwardDataSetCollection {
 		info := []string{
-			forwardDataSet.ID,
+			strconv.Itoa(forwardDataSet.ID),
 			forwardDataSet.Credentials.Credentials.Uri,
 			forwardDataSet.Credentials.Credentials.Username,
 			forwardDataSet.Credentials.Credentials.Password,

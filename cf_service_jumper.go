@@ -35,7 +35,7 @@ type ForwardCredentials struct {
 }
 
 type ForwardDataSet struct {
-	ID           string             `json:"id"`
+	ID           int                `json:"id"`
 	Hosts        []string           `json:"public_uris"`
 	SharedSecret string             `json:"shared_secret"`
 	Credentials  ForwardCredentials `json:"credentials"`

@@ -81,7 +81,7 @@ var _ = Describe("main", func() {
 					panic(fmt.Sprintf("fake server: verb POST expected", r.Method))
 				}
 
-				jsonStr := `{ "public_uris": ["10.100.0.60:27017", "10.100.0.61:27017"], "credentials": { "credentials": { "username": "the_username", "random_entry": "a_random_entry" } }, "shared_secret": "luser:01234567890123456789", "id": "1234" }`
+				jsonStr := `{ "public_uris": ["10.100.0.60:27017", "10.100.0.61:27017"], "credentials": { "credentials": { "username": "the_username", "random_entry": "a_random_entry" } }, "shared_secret": "luser:01234567890123456789", "id": 1234 }`
 				fmt.Fprintln(w, jsonStr)
 			}))
 			p := CfServiceJumperPlugin{
@@ -91,7 +91,7 @@ var _ = Describe("main", func() {
 			forwardDataSet, err := p.CreateForward("serviceGuid")
 			Expect(err).To(BeNil())
 			expectedForwardDataSet := ForwardDataSet{
-				ID:           "1234",
+				ID:           1234,
 				Hosts:        []string{"10.100.0.60:27017", "10.100.0.61:27017"},
 				SharedSecret: "luser:01234567890123456789",
 				Credentials: ForwardCredentials{
