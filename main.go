@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -47,7 +48,7 @@ func ArgsExtractConnectionID(args []string) (string, error) {
 func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string) (string, error) {
 	url := fmt.Sprintf("%s/v2/info", cfAPIEndpoint)
 
-	request := gorequest.New()
+	request := gorequest.New().TLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	resp, body, errs := request.Get(url).End()
 
 	if len(errs) > 0 {
