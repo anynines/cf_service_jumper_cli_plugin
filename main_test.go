@@ -91,6 +91,7 @@ var _ = Describe("main", func() {
 			forwardDataSet, err := p.CreateForward("serviceGuid")
 			Expect(err).To(BeNil())
 			expectedForwardDataSet := ForwardDataSet{
+				ID:           "1234",
 				Hosts:        []string{"10.100.0.60:27017", "10.100.0.61:27017"},
 				SharedSecret: "luser:01234567890123456789",
 				Credentials: ForwardCredentials{

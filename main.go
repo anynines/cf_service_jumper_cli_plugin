@@ -147,7 +147,14 @@ func (c *CfServiceJumperPlugin) ListForwards(serviceGUID string) error {
 		return fmt.Errorf("Failed cf_service_jumper request. HTTP status code != 200.\n%s", body)
 	}
 
-	fmt.Println(body)
+	var forwardDataSetCollection []ForwardDataSet
+	err := json.Unmarshal([]byte(body), &forwardDataSetCollection)
+	if err != nil {
+		return fmt.Errorf("[ERR] cf service jumper request failed. unmarshal error: %s", err)
+	}
+
+	OutputForwardDataSets(forwardDataSetCollection)
+
 	return nil
 }
 

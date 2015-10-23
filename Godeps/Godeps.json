@@ -1,15 +1,15 @@
 {
-	"ImportPath": "cf_service_jumper_cli_plugin",
-	"GoVersion": "go1.4.2",
+	"ImportPath": "github.com/a9hcp/cf_service_jumper_cli_plugin",
+	"GoVersion": "go1.5.1",
 	"Deps": [
-		{
-			"ImportPath": "github.com/a9hcp/cf_service_jumper_cli_plugin",
-			"Rev": "e63bc72b479aa002a26b1473fc746d42482f1036"
-		},
 		{
 			"ImportPath": "github.com/cloudfoundry/cli/plugin",
 			"Comment": "v6.12.1-4-g0ce1e35",
 			"Rev": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"ImportPath": "github.com/olekukonko/tablewriter",
+			"Rev": "bc39950e081b457853031334b3c8b95cdfe428ba"
 		},
 		{
 			"ImportPath": "github.com/onsi/ginkgo",
