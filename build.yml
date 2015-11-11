@@ -1,0 +1,10 @@
+---
+platform: linux
+image: docker:///concourse/static-golang
+
+inputs:
+  - name: cf-plugin-source
+    path: gopath/src/github.com/a9hcp/cf_service_jumper_cli_plugin
+
+run:
+  path: gopath/src/github.com/a9hcp/cf_service_jumper_cli_plugin/bin/ci-test.sh
