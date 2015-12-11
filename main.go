@@ -45,10 +45,13 @@ func ArgsExtractConnectionID(args []string) (string, error) {
 }
 
 // FetchCfServiceJumperAPIEndpoint fetches the Service Jumper API endpoint
-func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string) (string, error) {
+func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string, isSSLDisabled bool) (string, error) {
 	url := fmt.Sprintf("%s/v2/info", cfAPIEndpoint)
 
-	request := gorequest.New().TLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	request := gorequest.New()
+	if isSSLDisabled {
+		request = request.TLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	}
 	resp, body, errs := request.Get(url).End()
 
 	if len(errs) > 0 {
@@ -188,7 +191,10 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	apiEndpoint, err := cliConnection.ApiEndpoint()
 	fatalIf(err)
 
-	c.CfServiceJumperAPIEndpoint, err = FetchCfServiceJumperAPIEndpoint(apiEndpoint)
+	isSSLDisabled, err := cliConnection.IsSSLDisabled()
+	fatalIf(err)
+
+	c.CfServiceJumperAPIEndpoint, err = FetchCfServiceJumperAPIEndpoint(apiEndpoint, isSSLDisabled)
 	fatalIf(err)
 
 	if args[0] == "create-forward" {

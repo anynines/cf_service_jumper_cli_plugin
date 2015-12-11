@@ -48,7 +48,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			sjEndpoint, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL)
+			sjEndpoint, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL, false)
 			Expect(err).To(BeNil())
 			Expect(sjEndpoint).To(Equal("https://service-jumper.de.a9sservice.eu"))
 		})
@@ -59,7 +59,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL)
+			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL, false)
 			Expect(err).ToNot(BeNil())
 		})
 
@@ -69,7 +69,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL)
+			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL, false)
 			Expect(err).To(Equal(ErrCfServiceJumperEndpointNotPresent))
 		})
 	})
