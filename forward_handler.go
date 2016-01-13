@@ -9,7 +9,7 @@ import (
 	"github.com/a9hcp/cf_service_jumper_cli_plugin/xtunnel"
 )
 
-func ListenAndOutputInfo(hosts []string, sharedSecret string) error {
+func ListenAndOutputInfo(hosts []string, sharedSecret string, connectionPrinter ConnectionPrinter) error {
 	var err error
 
 	identity, key, err := GetIdentityAndKey(sharedSecret)
@@ -36,6 +36,11 @@ func ListenAndOutputInfo(hosts []string, sharedSecret string) error {
 				fmt.Println(fmt.Sprintf("Error on %s: %s", tunnel.LocalAddress(), err))
 			}
 		}(tunnel)
+	}
+
+	fmt.Printf("\nYou can connect to the service using the following command(s):\n")
+	for _, tunnel := range tunnels {
+		fmt.Println(connectionPrinter.SampleCallOutput(tunnel.LocalAddress()))
 	}
 
 	c := make(chan os.Signal, 1)

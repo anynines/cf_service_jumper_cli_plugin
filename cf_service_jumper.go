@@ -1,32 +1,26 @@
 package main
 
-type ForwardSbCredentials struct {
-	Uri             string `json:"uri"`
-	Username        string `json:"username"`
-	Password        string `json:"password"`
-	DefaultDatabase string `json:"default_database"`
-	Database        string `json:"database"`
-}
+import (
+	"fmt"
+	"strconv"
+)
+
+type ForwardSbCredentials map[string]interface{}
 
 func (self ForwardSbCredentials) CredentialsMap() map[string]string {
 	credentials := make(map[string]string)
 
-	if len(self.Uri) > 0 {
-		credentials["URI"] = self.Uri
+	for k, v := range self {
+		switch value := v.(type) {
+		case string:
+			credentials[k] = value
+		case int:
+			credentials[k] = strconv.Itoa(value)
+		case float64:
+			credentials[k] = fmt.Sprint(value)
+		default:
+		}
 	}
-	if len(self.Username) > 0 {
-		credentials["Username"] = self.Username
-	}
-	if len(self.Password) > 0 {
-		credentials["Password"] = self.Password
-	}
-	if len(self.DefaultDatabase) > 0 {
-		credentials["Default database"] = self.DefaultDatabase
-	}
-	if len(self.Database) > 0 {
-		credentials["Database"] = self.Database
-	}
-
 	return credentials
 }
 

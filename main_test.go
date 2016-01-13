@@ -81,7 +81,7 @@ var _ = Describe("main", func() {
 					panic(fmt.Sprintf("fake server: verb POST expected", r.Method))
 				}
 
-				jsonStr := `{ "public_uris": ["10.100.0.60:27017", "10.100.0.61:27017"], "credentials": { "credentials": { "username": "the_username", "random_entry": "a_random_entry" } }, "shared_secret": "luser:01234567890123456789", "id": 1234 }`
+				jsonStr := `{ "public_uris": ["10.100.0.60:27017", "10.100.0.61:27017"], "credentials": { "credentials": { "username": "the_username" } }, "shared_secret": "luser:01234567890123456789", "id": 1234 }`
 				fmt.Fprintln(w, jsonStr)
 			}))
 			p := CfServiceJumperPlugin{
@@ -90,13 +90,14 @@ var _ = Describe("main", func() {
 
 			forwardDataSet, err := p.CreateForward("serviceGuid")
 			Expect(err).To(BeNil())
+
 			expectedForwardDataSet := ForwardDataSet{
 				ID:           1234,
 				Hosts:        []string{"10.100.0.60:27017", "10.100.0.61:27017"},
 				SharedSecret: "luser:01234567890123456789",
 				Credentials: ForwardCredentials{
 					Credentials: ForwardSbCredentials{
-						Username: "the_username",
+						"username": "the_username",
 					},
 				},
 			}
@@ -110,20 +111,20 @@ var _ = Describe("main", func() {
 				fds := ForwardDataSet{
 					Credentials: ForwardCredentials{
 						Credentials: ForwardSbCredentials{
-							Uri:             "theuri",
-							Username:        "username",
-							Password:        "password",
-							DefaultDatabase: "defaultdatabase",
-							Database:        "database",
+							"uri":              "theuri",
+							"username":         "username",
+							"password":         "password",
+							"default_database": "defaultdatabase",
+							"database":         "database",
 						},
 					},
 				}
 				credentials := fds.CredentialsMap()
-				Expect(credentials["URI"]).To(Equal("theuri"))
-				Expect(credentials["Username"]).To(Equal("username"))
-				Expect(credentials["Password"]).To(Equal("password"))
-				Expect(credentials["Default database"]).To(Equal("defaultdatabase"))
-				Expect(credentials["Database"]).To(Equal("database"))
+				Expect(credentials["uri"]).To(Equal("theuri"))
+				Expect(credentials["username"]).To(Equal("username"))
+				Expect(credentials["password"]).To(Equal("password"))
+				Expect(credentials["default_database"]).To(Equal("defaultdatabase"))
+				Expect(credentials["database"]).To(Equal("database"))
 			})
 		})
 	})

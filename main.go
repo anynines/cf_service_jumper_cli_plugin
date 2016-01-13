@@ -203,10 +203,16 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 
 		fmt.Println("\nCredentials:")
 		for credentialKey, credentialValue := range credentials {
+			if stringInStrSlice(credentialKey, []string{"uri", "host", "port"}) {
+				continue
+			}
+
 			fmt.Println(fmt.Sprintf("%s: %s", credentialKey, credentialValue))
 		}
+		fmt.Printf("\n")
 
-		ListenAndOutputInfo(forwardInfo.Hosts, forwardInfo.SharedSecret)
+		connectionPrinter := SelectConnectionPrinter(credentials)
+		ListenAndOutputInfo(forwardInfo.Hosts, forwardInfo.SharedSecret, connectionPrinter)
 
 		fmt.Println("\nRemember to 'cf delete-forward'!")
 
