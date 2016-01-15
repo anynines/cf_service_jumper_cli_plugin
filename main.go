@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/cloudfoundry/cli/plugin"
-	"github.com/parnurzeal/gorequest"
 )
 
 func fatalIf(err error) {
@@ -48,11 +46,8 @@ func ArgsExtractConnectionID(args []string) (string, error) {
 func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string, isSSLDisabled bool) (string, error) {
 	url := fmt.Sprintf("%s/v2/info", cfAPIEndpoint)
 
-	request := gorequest.New()
-	if isSSLDisabled {
-		request = request.TLSClientConfig(&tls.Config{InsecureSkipVerify: true})
-	}
-	resp, body, errs := request.Get(url).End()
+	httpClient := NewHttpClient(isSSLDisabled)
+	resp, body, errs := httpClient.Get(url).End()
 
 	if len(errs) > 0 {
 		return "", ErrCfServiceJumperEndpointGetFailed
@@ -83,6 +78,8 @@ func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string, isSSLDisabled bool) (
 type CfServiceJumperPlugin struct {
 	CfServiceJumperAccessToken string
 	CfServiceJumperAPIEndpoint string
+
+	isSSLDisabled bool
 }
 
 // FetchServiceGUID fetch service GUID by service name
@@ -103,8 +100,8 @@ func (c *CfServiceJumperPlugin) CreateForward(serviceGUID string) (ForwardDataSe
 	path := fmt.Sprintf("/services/%s/forwards", serviceGUID)
 	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
 
-	request := gorequest.New()
-	resp, body, errs := request.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
+	httpClient := NewHttpClient(c.isSSLDisabled)
+	resp, body, errs := httpClient.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
 		return forwardDataSet, fmt.Errorf("[ERR] cf service jumper request failed. %s", errs[0])
 	}
@@ -124,8 +121,8 @@ func (c *CfServiceJumperPlugin) DeleteForward(serviceGUID string, connectionID s
 	path := fmt.Sprintf("/services/%s/forwards/%s", serviceGUID, connectionID)
 	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
 
-	request := gorequest.New()
-	resp, body, errs := request.Delete(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
+	httpClient := NewHttpClient(c.isSSLDisabled)
+	resp, body, errs := httpClient.Delete(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
 		return fmt.Errorf("[ERR] Failed cf_service_jumper request. %s", errs[0].Error())
 	}
@@ -142,8 +139,8 @@ func (c *CfServiceJumperPlugin) ListForwards(serviceGUID string) error {
 	path := fmt.Sprintf("/services/%s/forwards/", serviceGUID)
 	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
 
-	request := gorequest.New()
-	resp, body, errs := request.Get(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
+	httpClient := NewHttpClient(c.isSSLDisabled)
+	resp, body, errs := httpClient.Get(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
 		return fmt.Errorf("Failed cf_service_jumper request. %s", errs[0].Error())
 	}
@@ -175,9 +172,14 @@ func (c *CfServiceJumperPlugin) ListForwards(serviceGUID string) error {
 // user facing errors). The CLI will exit 0 if the plugin exits 0 and will exit
 // 1 should the plugin exits nonzero.
 func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []string) {
+	var err error
+
 	if args[0] == "CLI-MESSAGE-UNINSTALL" {
 		os.Exit(0)
 	}
+
+	c.isSSLDisabled, err = cliConnection.IsSSLDisabled()
+	fatalIf(err)
 
 	serviceInstanceName, err := ArgsExtractServiceInstanceName(args)
 	fatalIf(err)
@@ -191,10 +193,7 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 	apiEndpoint, err := cliConnection.ApiEndpoint()
 	fatalIf(err)
 
-	isSSLDisabled, err := cliConnection.IsSSLDisabled()
-	fatalIf(err)
-
-	c.CfServiceJumperAPIEndpoint, err = FetchCfServiceJumperAPIEndpoint(apiEndpoint, isSSLDisabled)
+	c.CfServiceJumperAPIEndpoint, err = FetchCfServiceJumperAPIEndpoint(apiEndpoint, c.isSSLDisabled)
 	fatalIf(err)
 
 	if args[0] == "create-forward" {
