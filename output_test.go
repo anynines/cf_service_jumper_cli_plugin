@@ -10,7 +10,7 @@ var _ = Describe("PostgresConnectionPrinter", func() {
 	Describe("SampleCallOutput", func() {
 		It("returns cmd", func() {
 			cp := PostgresConnectionPrinter{
-				Credentials: map[string]string{
+				ConnectionPrinterCredentials: map[string]string{
 					"username": "the_username",
 					"password": "the_password",
 					"name":     "databasename",
@@ -26,7 +26,7 @@ var _ = Describe("MongodbConnectionPrinter", func() {
 	Describe("SampleCallOutput", func() {
 		It("returns cmd", func() {
 			cp := MongodbConnectionPrinter{
-				Credentials: map[string]string{
+				ConnectionPrinterCredentials: map[string]string{
 					"username":         "the_username",
 					"password":         "the_password",
 					"default_database": "databasename",
@@ -34,6 +34,22 @@ var _ = Describe("MongodbConnectionPrinter", func() {
 			}
 
 			Expect(cp.SampleCallOutput("localhost:56789")).To(Equal("mongo localhost:56789/databasename -u the_username -p the_password"))
+		})
+	})
+})
+
+var _ = Describe("RabbitMQConnectionPrinter", func() {
+	Describe("SampleCallOutput", func() {
+		It("returns NO cmd", func() {
+			cp := RabbitMQConnectionPrinter{
+				ConnectionPrinterCredentials: map[string]string{
+					"username":         "the_username",
+					"password":         "the_password",
+					"default_database": "databasename",
+				},
+			}
+
+			Expect(cp.SampleCallOutput("localhost:56789")).To(Equal(""))
 		})
 	})
 })
