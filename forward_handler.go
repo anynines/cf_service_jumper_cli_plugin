@@ -38,10 +38,14 @@ func ListenAndOutputInfo(hosts []string, sharedSecret string, connectionPrinter 
 		}(tunnel)
 	}
 
-	fmt.Printf("\nYou can connect to the service using the following command(s):\n")
+	var sampleOutputs []string
 	for _, tunnel := range tunnels {
-		fmt.Println(connectionPrinter.SampleCallOutput(tunnel.LocalAddress()))
+		sampleOutput := connectionPrinter.SampleCallOutput(tunnel.LocalAddress())
+		if len(sampleOutput) > 0 {
+			sampleOutputs = append(sampleOutputs, sampleOutput)
+		}
 	}
+	OutputSampleCmds(sampleOutputs)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM)
