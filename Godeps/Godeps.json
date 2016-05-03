@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/a9hcp/cf_service_jumper_cli_plugin",
+	"ImportPath": "github.com/anynines/cf_service_jumper_cli_plugin",
 	"GoVersion": "go1.5.1",
 	"Deps": [
 		{

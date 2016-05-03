@@ -1,7 +1,7 @@
 package main_test
 
 import (
-	. "github.com/a9hcp/cf_service_jumper_cli_plugin"
+	. "github.com/anynines/cf_service_jumper_cli_plugin"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

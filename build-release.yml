@@ -4,7 +4,7 @@ image: docker:///concourse/static-golang
 
 inputs:
   - name: cf-plugin-source
-    path: gopath/src/github.com/a9hcp/cf_service_jumper_cli_plugin
+    path: gopath/src/github.com/anynines/cf_service_jumper_cli_plugin
 
 run:
-  path: gopath/src/github.com/a9hcp/cf_service_jumper_cli_plugin/bin/ci-release.sh
+  path: gopath/src/github.com/anynines/cf_service_jumper_cli_plugin/bin/ci-release.sh

@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/a9hcp/cf_service_jumper_cli_plugin/xtunnel"
+	"github.com/anynines/cf_service_jumper_cli_plugin/xtunnel"
 )
 
 func ListenAndOutputInfo(hosts []string, sharedSecret string, connectionPrinter ConnectionPrinter) error {

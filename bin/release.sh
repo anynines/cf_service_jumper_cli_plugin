@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export GH_ORG=${GH_ORG:-a9hcp}
+export GH_ORG=${GH_ORG:-anynines}
 export GH_REPO=${GH_REPO:-cf_service_jumper_cli_plugin}
 export NAME=${NAME:-"cf cli plugin for jhaas"}
 export DESCRIPTION=${DESCRIPTION:-"Forward service ports"}
