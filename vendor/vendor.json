@@ -3,10 +3,17 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "jEqvMf5r7K1XZjrU3+aTnKc8sv0=",
+			"checksumSHA1": "saaA1JjTTua8s4tG/6O/bAklttU=",
+			"path": "code.cloudfoundry.org/cli/plugin/models",
+			"revision": "6a58d42dbce62196f3b819aba48545768a30b317",
+			"revisionTime": "2016-10-07T02:37:59Z"
+		},
+		{
+			"checksumSHA1": "90ZyxUO67andGcqxWmCxmE8nnMQ=",
 			"comment": "v6.12.1-4-g0ce1e35",
 			"path": "github.com/cloudfoundry/cli/plugin",
-			"revision": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+			"revision": "6a58d42dbce62196f3b819aba48545768a30b317",
+			"revisionTime": "2016-10-07T02:37:59Z"
 		},
 		{
 			"checksumSHA1": "m2r7soWPJdS732yqDlUt+kc+Fyk=",
@@ -49,10 +56,11 @@
 			"revision": "bc39950e081b457853031334b3c8b95cdfe428ba"
 		},
 		{
-			"checksumSHA1": "qafPKAxcGTNAL1S6Ly6hs4hVT8k=",
+			"checksumSHA1": "5CYrIFTTUD3pONFo8uEO21Ajz68=",
 			"comment": "v1.2.0-8-g25380c6",
 			"path": "github.com/onsi/ginkgo",
-			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+			"revision": "acfa16ac8e9e0d2c6b11cfe78c79d8652c3ee3fd",
+			"revisionTime": "2016-10-07T05:04:02Z"
 		},
 		{
 			"checksumSHA1": "R0SNYpmISoxRcVWhRXLmWbOkqzY=",
@@ -187,10 +195,11 @@
 			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
 		},
 		{
-			"checksumSHA1": "F2nzbTb5VserStm8/ZYLt7m6EMk=",
+			"checksumSHA1": "3g6SrQ0YmvEvx1MTqwKPqZd7B38=",
 			"comment": "v1.0-50-gd6c945f",
 			"path": "github.com/onsi/gomega",
-			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+			"revision": "d59fa0ac68bb5dd932ee8d24eed631cdd519efc3",
+			"revisionTime": "2016-09-11T05:10:23Z"
 		},
 		{
 			"checksumSHA1": "VrTakWOJeOH8XD3UXGlv46brx10=",

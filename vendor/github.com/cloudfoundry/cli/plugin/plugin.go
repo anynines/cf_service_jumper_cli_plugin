@@ -1,6 +1,6 @@
 package plugin
 
-import "github.com/cloudfoundry/cli/plugin/models"
+import "code.cloudfoundry.org/cli/plugin/models"
 
 /**
 	Command interface needs to be implemented for a runnable plugin of `cf`
@@ -10,6 +10,7 @@ type Plugin interface {
 	GetMetadata() PluginMetadata
 }
 
+//go:generate counterfeiter . CliConnection
 /**
 	List of commands avaiable to CliConnection variable passed into run
 **/
