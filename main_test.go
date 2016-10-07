@@ -48,7 +48,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			sjEndpoint, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL, false)
+			sjEndpoint, err := FetchCfServiceJumperAPIEndpointFromInfo(fakeEndpointServer.URL, false)
 			Expect(err).To(BeNil())
 			Expect(sjEndpoint).To(Equal("https://service-jumper.de.a9sservice.eu"))
 		})
@@ -59,7 +59,7 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL, false)
+			_, err := FetchCfServiceJumperAPIEndpointFromInfo(fakeEndpointServer.URL, false)
 			Expect(err).ToNot(BeNil())
 		})
 
@@ -69,8 +69,24 @@ var _ = Describe("main", func() {
 				fmt.Fprintln(w, jsonStr)
 			}))
 
-			_, err := FetchCfServiceJumperAPIEndpoint(fakeEndpointServer.URL, false)
+			_, err := FetchCfServiceJumperAPIEndpointFromInfo(fakeEndpointServer.URL, false)
 			Expect(err).To(Equal(ErrCfServiceJumperEndpointNotPresent))
+		})
+	})
+
+	Describe("FetchCfServiceJumperAPIEndpointFromSharedDomain", func() {
+		It("returns service jumper endpoint", func() {
+			endpoint, err := FetchCfServiceJumperAPIEndpointFromSharedDomain("https://api.the.endpoint.com")
+			Expect(err).To(BeNil())
+			Expect(endpoint).To(Equal("https://a9s-service-jumper.the.endpoint.com"))
+
+			endpoint, err = FetchCfServiceJumperAPIEndpointFromSharedDomain("http://api.the.endpoint.com")
+			Expect(err).To(BeNil())
+			Expect(endpoint).To(Equal("http://a9s-service-jumper.the.endpoint.com"))
+
+			endpoint, err = FetchCfServiceJumperAPIEndpointFromSharedDomain("http://api.aws.ie.a9sapp.eu")
+			Expect(err).To(BeNil())
+			Expect(endpoint).To(Equal("http://a9s-service-jumper.aws.ie.a9sapp.eu"))
 		})
 	})
 

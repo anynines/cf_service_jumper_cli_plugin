@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -18,11 +19,14 @@ func fatalIf(err error) {
 	}
 }
 
-var ErrMissingServiceInstanceArg = errors.New("[ERR] missing SERVICE_INSTANCE")
-var ErrMissingConnectionID = errors.New("[ERR] missing CONNECTION_ID")
-var ErrCfServiceJumperEndpointGetFailed = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint")
-var ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200")
-var ErrCfServiceJumperEndpointNotPresent = errors.New("[ERR] cf service jumper api endpoint not present/installed")
+var (
+	ErrMissingServiceInstanceArg              = errors.New("[ERR] missing SERVICE_INSTANCE")
+	ErrMissingConnectionID                    = errors.New("[ERR] missing CONNECTION_ID")
+	ErrCfServiceJumperEndpointGetFailed       = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint")
+	ErrCfServiceJumperEndpointStatusCodeWrong = errors.New("[ERR] Failed to fetch information from Cloud Foundry api endpoint. HTTP status code != 200")
+	ErrCfServiceJumperEndpointNotPresent      = errors.New("[ERR] cf service jumper api endpoint not present/installed")
+	PcfServiceJumperHostname                  = "a9s-service-jumper"
+)
 
 // ArgsExtractServiceInstanceName extract service instance name from args
 func ArgsExtractServiceInstanceName(args []string) (string, error) {
@@ -44,6 +48,15 @@ func ArgsExtractConnectionID(args []string) (string, error) {
 
 // FetchCfServiceJumperAPIEndpoint fetches the Service Jumper API endpoint
 func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string, isSSLDisabled bool) (string, error) {
+	endpoint, err := FetchCfServiceJumperAPIEndpointFromInfo(cfAPIEndpoint, isSSLDisabled)
+	if err == nil {
+		return endpoint, nil
+	}
+
+	return FetchCfServiceJumperAPIEndpointFromSharedDomain(cfAPIEndpoint)
+}
+
+func FetchCfServiceJumperAPIEndpointFromInfo(cfAPIEndpoint string, isSSLDisabled bool) (string, error) {
 	url := fmt.Sprintf("%s/v2/info", cfAPIEndpoint)
 
 	httpClient := NewHttpClient(isSSLDisabled)
@@ -71,6 +84,17 @@ func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string, isSSLDisabled bool) (
 	}
 
 	return serviceJumperEndpoint, nil
+}
+
+func FetchCfServiceJumperAPIEndpointFromSharedDomain(cfAPIEndpoint string) (string, error) {
+	u, err := url.Parse(cfAPIEndpoint)
+	if err != nil {
+		return "", err
+	}
+
+	u.Host = strings.TrimPrefix(u.Host, "api.")
+	u.Host = PcfServiceJumperHostname + "." + u.Host
+	return u.String(), nil
 }
 
 // CfServiceJumperPlugin This is the struct implementing the interface defined by the core CLI. It can
