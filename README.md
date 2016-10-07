@@ -22,8 +22,7 @@ cf uninstall-plugin CfServiceJumperPlugin
 ### Prerequisites
 
 ```shell
-go get github.com/tools/godep
-godep restore
+go get -u github.com/kardianos/govendor
 ```
 
 ### Build, Install & Uninstall

@@ -8,9 +8,6 @@ export PATH=$GOPATH/bin:$PATH
 
 cd $GOPATH/src/github.com/anynines/cf_service_jumper_cli_plugin
 
-export GOPATH=${PWD}/Godeps/_workspace:$GOPATH
-export PATH=${PWD}/Godeps/_workspace/bin:$PATH
-
 go get github.com/mitchellh/gox
 
 if [[ "$(which gox)X" == "X" ]]; then

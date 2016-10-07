@@ -1,0 +1,302 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "jEqvMf5r7K1XZjrU3+aTnKc8sv0=",
+			"comment": "v6.12.1-4-g0ce1e35",
+			"path": "github.com/cloudfoundry/cli/plugin",
+			"revision": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"checksumSHA1": "m2r7soWPJdS732yqDlUt+kc+Fyk=",
+			"comment": "v6.12.1-4-g0ce1e35",
+			"path": "github.com/cloudfoundry/cli/plugin/fakes",
+			"revision": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"checksumSHA1": "ENxtUQekPm2Wh5XvXNXorbB7FxM=",
+			"comment": "v6.12.1-4-g0ce1e35",
+			"path": "github.com/cloudfoundry/cli/plugin/models",
+			"revision": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"checksumSHA1": "w+7XNIXR7oHvmIUuLjWfoGWmoS8=",
+			"comment": "v6.12.1-4-g0ce1e35",
+			"path": "github.com/cloudfoundry/cli/plugin/rpc",
+			"revision": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"checksumSHA1": "T3R+WVqA1WP2zlxMgCPwic8O/OI=",
+			"comment": "v6.12.1-4-g0ce1e35",
+			"path": "github.com/cloudfoundry/cli/plugin/rpc/fake_command",
+			"revision": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"checksumSHA1": "sdXaxkoce55QTrCYmCgTvBkXwAI=",
+			"comment": "v6.12.1-4-g0ce1e35",
+			"path": "github.com/cloudfoundry/cli/plugin/rpc/fakes",
+			"revision": "0ce1e35107e0c9afefd46e7185186c81d37bf398"
+		},
+		{
+			"checksumSHA1": "2aEHeVmPcEwupcMo8UXXAdzoAz0=",
+			"path": "github.com/olekukonko/tablewriter",
+			"revision": "bc39950e081b457853031334b3c8b95cdfe428ba"
+		},
+		{
+			"checksumSHA1": "ZSa70IXKBdJ/6ADr8WlNJYeAfgo=",
+			"path": "github.com/olekukonko/tablewriter/csv2table",
+			"revision": "bc39950e081b457853031334b3c8b95cdfe428ba"
+		},
+		{
+			"checksumSHA1": "qafPKAxcGTNAL1S6Ly6hs4hVT8k=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "R0SNYpmISoxRcVWhRXLmWbOkqzY=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/config",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "YrY5aYBCsXmisItDjjhIki+dUkc=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/ginkgo",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "RX2QA4mqBzsogy4OWOCi9mUfAGU=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/ginkgo/convert",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "J7jqj8o+ZFNckMG3cPsSs2WoCF8=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/ginkgo/interrupthandler",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "brZ63GMMr79P/RwClxFRBKMtICg=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/ginkgo/nodot",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "kE0ug9RiPSimxFKf5Em7/UAJJto=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/ginkgo/testrunner",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "eEP6Pt0fw7YuvcUvEZM0iBPP/Mg=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/ginkgo/testsuite",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "EZTrKh8zPpIkRugXna/dPlS84kw=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/ginkgo/watch",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "Q8OjMptzcvlLxaJAzq0GBTf3muM=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/integration",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "T1cZh3UWr4Hnx6fQYp+7KDNvxG4=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/codelocation",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "qvz6/+otRkWa1OHaPMKap9D5Ge4=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/containernode",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "882oWW4FC4Nrd8mrMptsDJSTDds=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/failer",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "xEkrCNlhTupY+v9vx7z6goznImk=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/leafnodes",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "dNoKfCn2zrhps3+ofH0YzylO0qo=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/remote",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "eB1d2Ucr6kf6RtNhnPAk1I+z/jU=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/spec",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "4bevAplfVxvxbgQOLIc2elkiREo=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/specrunner",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "yoBD2mP9+iS0TmESeR6U3mtD3X0=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/suite",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "6sOxGhw1brknfjJd9h7MhpnxHMY=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/testingtproxy",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "dpgqwFYT7NWSOG0Ah+r6kgMhrBg=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/internal/writer",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "Ns/YVVNxy4JTzrzjxToWV10lwWc=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/reporters",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "LFlv3sbzEoTcjS6gtctz/HLO74g=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/reporters/stenographer",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "DOEsHDMKymDE0zarjkXifirEhj8=",
+			"comment": "v1.2.0-8-g25380c6",
+			"path": "github.com/onsi/ginkgo/types",
+			"revision": "25380c62e61d3f90436be125b8127dbae578fdef"
+		},
+		{
+			"checksumSHA1": "F2nzbTb5VserStm8/ZYLt7m6EMk=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "VrTakWOJeOH8XD3UXGlv46brx10=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/format",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "DQJ3llWDuIWg2rwgxOCMO3d+Dic=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/gbytes",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "Al/kfmShH82O7ioUuXNaCN0N+VM=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/gexec",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "UkU/YRf+ACHd7ndwA0MMNndx/AU=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/ghttp",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "H4RBR9kcEWh2lECAzBaOTSvgUuA=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/internal/assertion",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "FK2Mo40RhzbRWSE+/6QXtEpaZYQ=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/internal/asyncassertion",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "CIwteJCVKKQDPoXfqtVTVMHAeEU=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/internal/fakematcher",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "G+KJsEQohAtPAHEbhHxRN0pffcA=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/internal/testingtsupport",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "eNSuYLvdoVMQ/r3yDw/vNknuWcU=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/matchers",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "gWJfsDHiZTga1esEChd+MfpftN0=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/bipartitegraph",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "zjTC6ady0bJUwzTFAKtv63T7Fmg=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/edge",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "o2+IscLOPKOiovl2g0/igkD1R4Q=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/node",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "W1zfga0jmo7Daetjcur8v2hh0y8=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/matchers/support/goraph/util",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "zEuQ0PUlbqojtNwvu01Mn3DQCJM=",
+			"comment": "v1.0-50-gd6c945f",
+			"path": "github.com/onsi/gomega/types",
+			"revision": "d6c945f9fdbf6cad99e85b0feff591caa268e0db"
+		},
+		{
+			"checksumSHA1": "dq3hjvYIDtJum36bGMN5YnYZMJI=",
+			"comment": "v0.2.9",
+			"path": "github.com/parnurzeal/gorequest",
+			"revision": "1f4e8242ff000cfd0614a19da3b655be4e347f92"
+		},
+		{
+			"checksumSHA1": "QVxmAf2Um/f1liDeMKhZEKv6s9Q=",
+			"path": "github.com/raff/tls-ext",
+			"revision": "4459e380bb116a78e5ee3d56d298643b03c9ebbf"
+		},
+		{
+			"checksumSHA1": "dE0J202Mzq1qL73u430jyhpU5F4=",
+			"path": "github.com/raff/tls-psk",
+			"revision": "606f79fec3774d6cb6b9af7943bf524b0722a37c"
+		},
+		{
+			"checksumSHA1": "dViq7UcyV7KGnlrkTUdZL8AULSQ=",
+			"path": "golang.org/x/net/publicsuffix",
+			"revision": "d9558e5c97f85372afee28cf2b6059d7d3818919"
+		}
+	],
+	"rootPath": "github.com/anynines/cf_service_jumper_cli_plugin"
+}
