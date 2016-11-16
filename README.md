@@ -3,6 +3,24 @@
 This CF cli plugin uses the [CF Service Jumper service](https://github.com/anynines/cf_service_jumper)
 to create, delete and list forwards to services.
 
+## Usage
+```shell
+cf create-forward SERVICE_NAME
+cf delete-forward SERVICE_NAME FORWARD_ID
+cf list-forwards SERVICE_NAME
+```
+
+```shell
+# show custom service jumper endpoint; determines endpoint automatically if blank
+cf forward-api
+
+# set custom service jumper endpoint
+cf forward-api https://my-custom-service-jumper-endpoint.com
+
+# remove custom service jumper endpoint
+cf forward-api -d
+```
+
 ## Installation
 
 Download the latest release for your platform from the [release page](https://github.com/anynines/cf_service_jumper_cli_plugin/releases).
@@ -38,13 +56,6 @@ cf install-plugin CfServiceJumperPlugin
 We're using [ginko](https://github.com/onsi/ginkgo) as testing framework.
  ```shell
 go test
-```
-
-## Usage
-```shell
-cf create-forward SERVICE_NAME
-cf delete-forward SERVICE_NAME FORWARD_ID
-cf list-forwards SERVICE_NAME
 ```
 
 ## Release

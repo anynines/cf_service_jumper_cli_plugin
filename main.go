@@ -9,7 +9,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/anynines/cf_service_jumper_cli_plugin/plugin/config"
 	"github.com/cloudfoundry/cli/plugin"
+	"github.com/parnurzeal/gorequest"
 )
 
 func fatalIf(err error) {
@@ -48,12 +50,28 @@ func ArgsExtractConnectionID(args []string) (string, error) {
 
 // FetchCfServiceJumperAPIEndpoint fetches the Service Jumper API endpoint
 func FetchCfServiceJumperAPIEndpoint(cfAPIEndpoint string, isSSLDisabled bool) (string, error) {
-	endpoint, err := FetchCfServiceJumperAPIEndpointFromInfo(cfAPIEndpoint, isSSLDisabled)
+	endpoint, err := FetchCfServiceJumperAPIEndpointFromConfig()
+	if err == nil && endpoint != "" {
+		return endpoint, nil
+	}
+
+	endpoint, err = FetchCfServiceJumperAPIEndpointFromInfo(cfAPIEndpoint, isSSLDisabled)
 	if err == nil {
 		return endpoint, nil
 	}
 
 	return FetchCfServiceJumperAPIEndpointFromSharedDomain(cfAPIEndpoint)
+}
+
+func FetchCfServiceJumperAPIEndpointFromConfig() (string, error) {
+	forwardConfig, err := config.GetConfig()
+	if err == config.ErrForwardConfigMissing {
+		return "", config.ErrTargetBlank
+	}
+	if forwardConfig.Target == "" {
+		return "", config.ErrTargetBlank
+	}
+	return forwardConfig.Target, nil
 }
 
 func FetchCfServiceJumperAPIEndpointFromInfo(cfAPIEndpoint string, isSSLDisabled bool) (string, error) {
@@ -117,14 +135,26 @@ func (c *CfServiceJumperPlugin) FetchServiceGUID(cliConnection plugin.CliConnect
 	return serviceGUID, nil
 }
 
+func (c *CfServiceJumperPlugin) NewHttpClient() *gorequest.SuperAgent {
+	return NewHttpClient(c.isSSLDisabled)
+}
+
+func (c *CfServiceJumperPlugin) NewUrl(path string) string {
+	u := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
+	if c.isSSLDisabled {
+		u = u + "?skip-ssl-validation=true"
+	}
+	return u
+}
+
 // CreateForward create forward for service
 func (c *CfServiceJumperPlugin) CreateForward(serviceGUID string) (ForwardDataSet, error) {
 	var forwardDataSet ForwardDataSet
 
 	path := fmt.Sprintf("/services/%s/forwards", serviceGUID)
-	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
+	url := c.NewUrl(path)
 
-	httpClient := NewHttpClient(c.isSSLDisabled)
+	httpClient := c.NewHttpClient()
 	resp, body, errs := httpClient.Post(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
 		return forwardDataSet, fmt.Errorf("[ERR] cf service jumper request failed. %s", errs[0])
@@ -143,9 +173,9 @@ func (c *CfServiceJumperPlugin) CreateForward(serviceGUID string) (ForwardDataSe
 // DeleteForward delete forward for service
 func (c *CfServiceJumperPlugin) DeleteForward(serviceGUID string, connectionID string) error {
 	path := fmt.Sprintf("/services/%s/forwards/%s", serviceGUID, connectionID)
-	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
+	url := c.NewUrl(path)
 
-	httpClient := NewHttpClient(c.isSSLDisabled)
+	httpClient := c.NewHttpClient()
 	resp, body, errs := httpClient.Delete(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
 		return fmt.Errorf("[ERR] Failed cf_service_jumper request. %s", errs[0].Error())
@@ -161,9 +191,9 @@ func (c *CfServiceJumperPlugin) DeleteForward(serviceGUID string, connectionID s
 // ListForwards list all forwards for the given service
 func (c *CfServiceJumperPlugin) ListForwards(serviceGUID string) error {
 	path := fmt.Sprintf("/services/%s/forwards/", serviceGUID)
-	url := fmt.Sprintf("%s%s", c.CfServiceJumperAPIEndpoint, path)
+	url := c.NewUrl(path)
 
-	httpClient := NewHttpClient(c.isSSLDisabled)
+	httpClient := c.NewHttpClient()
 	resp, body, errs := httpClient.Get(url).Set("Authorization", c.CfServiceJumperAccessToken).End()
 	if errs != nil {
 		return fmt.Errorf("Failed cf_service_jumper request. %s", errs[0].Error())
@@ -200,6 +230,32 @@ func (c *CfServiceJumperPlugin) Run(cliConnection plugin.CliConnection, args []s
 
 	if args[0] == "CLI-MESSAGE-UNINSTALL" {
 		os.Exit(0)
+	}
+
+	if args[0] == "forward-api" {
+		if len(args) > 1 {
+			if args[1] == "-d" {
+				// delete forward api endpoint
+				err = config.SetTarget("")
+				fatalIf(err)
+				return
+			}
+
+			// set forward endpoint
+			_, err := url.ParseRequestURI(args[1])
+			fatalIf(err)
+
+			err = config.SetTarget(args[1])
+			fatalIf(err)
+			fmt.Printf("forwarf-api set to %s\n", args[1])
+			return
+		}
+
+		// show forward endpoint
+		endpoint, err := FetchCfServiceJumperAPIEndpointFromConfig()
+		fatalIf(err)
+		fmt.Printf("forward-api %s\n", endpoint)
+		return
 	}
 
 	c.isSSLDisabled, err = cliConnection.IsSSLDisabled()
@@ -267,7 +323,7 @@ func (c *CfServiceJumperPlugin) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
 		Name: "CfServiceJumperPlugin",
 		Version: plugin.VersionType{
-			Major: 1,
+			Major: 2,
 			Minor: 0,
 			Build: 0,
 		},
@@ -276,21 +332,28 @@ func (c *CfServiceJumperPlugin) GetMetadata() plugin.PluginMetadata {
 				Name:     "create-forward",
 				HelpText: "Creates/Recycles forward to service instance.",
 				UsageDetails: plugin.Usage{
-					Usage: "\n   cf create-forward SERVICE_INSTANCE",
+					Usage: "cf create-forward SERVICE_INSTANCE",
 				},
 			},
 			plugin.Command{
 				Name:     "delete-forward",
 				HelpText: "Deletes forward to service instance.",
 				UsageDetails: plugin.Usage{
-					Usage: "\n   cf delete-forward SERVICE_INSTANCE CONNECTION_ID",
+					Usage: "cf delete-forward SERVICE_INSTANCE CONNECTION_ID",
 				},
 			},
 			plugin.Command{
 				Name:     "list-forwards",
 				HelpText: "List open forwards to service instance.",
 				UsageDetails: plugin.Usage{
-					Usage: "\n   cf list-forwards",
+					Usage: "cf list-forwards",
+				},
+			},
+			plugin.Command{
+				Name:     "forward-api",
+				HelpText: "Show/Set/Delete service jumper api url.",
+				UsageDetails: plugin.Usage{
+					Usage: "cf forward-api SERVICE_JUMPER_API_URL\ncf forward-api [-d]",
 				},
 			},
 		},
